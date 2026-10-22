@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Register - Looc Integrated School Portal</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body class="auth-page">
+
+  <div class="auth-card" style="max-width: 480px;">
+    <div class="auth-brand">
+      <div class="school-badge">LIS</div>
+      <h1>Looc Integrated School</h1>
+      <p>Division of Calamba City &middot; Department of Education</p>
+    </div>
+
+    <h2>Create Account</h2>
+    <p class="auth-subtitle">Register as a student or a teacher.</p>
+
+    <div id="alertBox" class="alert alert-error"></div>
+
+    <form id="registerForm" novalidate>
+      <div class="form-group">
+        <label>I am registering as</label>
+        <div style="display:flex; gap:16px;">
+          <label style="display:flex; align-items:center; gap:6px; font-weight:400;">
+            <input type="radio" name="role" id="roleStudent" value="student" checked style="width:auto;" /> Student
+          </label>
+          <label style="display:flex; align-items:center; gap:6px; font-weight:400;">
+            <input type="radio" name="role" id="roleTeacher" value="teacher" style="width:auto;" /> Teacher
+          </label>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="userId" id="userIdLabel">Student ID</label>
+          <input type="text" id="userId" required />
+        </div>
+        <div class="form-group">
+          <label for="email">Email address</label>
+          <input type="email" id="email" required autocomplete="username" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="firstName">First name</label>
+          <input type="text" id="firstName" required />
+        </div>
+        <div class="form-group">
+          <label for="lastName">Last name</label>
+          <input type="text" id="lastName" required />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" required autocomplete="new-password" minlength="6" />
+        </div>
+        <div class="form-group">
+          <label for="confirmPassword">Confirm password</label>
+          <input type="password" id="confirmPassword" required autocomplete="new-password" minlength="6" />
+        </div>
+      </div>
+
+      <div id="studentFields">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="course">Course / Strand <span class="optional">(optional)</span></label>
+            <input type="text" id="course" placeholder="e.g. STEM, TVL-ICT" />
+          </div>
+          <div class="form-group">
+            <label for="yearLevel">Year / Grade level <span class="optional">(optional)</span></label>
+            <input type="text" id="yearLevel" placeholder="e.g. Grade 10" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="section">Section <span class="optional">(optional)</span></label>
+          <input type="text" id="section" placeholder="e.g. Rizal" />
+        </div>
+      </div>
+
+      <div id="teacherFields" class="hidden">
+        <div class="form-group">
+          <label for="department">Department <span class="optional">(optional)</span></label>
+          <input type="text" id="department" placeholder="e.g. Science Department" />
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary" id="registerBtn">Create Account</button>
+    </form>
+
+    <div class="auth-footer">
+      Already have an account? <a href="index.html">Sign in</a>
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/shell.js"></script>
+  <script src="js/register.js"></script>
+</body>
+</html>

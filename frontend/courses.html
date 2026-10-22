@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>My Courses - Student Portal</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header id="app-header"></header>
+  <aside id="app-sidebar"></aside>
+  <div id="sidebar-backdrop"></div>
+
+  <main class="app-main">
+    <div class="page-header">
+      <div>
+        <h1>My Courses</h1>
+        <div class="subtitle">Courses you're currently enrolled in, and courses you can join.</div>
+      </div>
+    </div>
+
+    <div id="alertBox" class="alert alert-error"></div>
+    <div id="successBox" class="alert alert-success"></div>
+
+    <div class="card">
+      <h2>Enrolled</h2>
+      <div id="loadingEnrolled" class="loading-row">Loading your courses...</div>
+      <div id="enrolledList" class="course-grid hidden"></div>
+    </div>
+
+    <div class="card">
+      <h2>Browse Available Courses</h2>
+      <div id="loadingAvailable" class="loading-row">Loading available courses...</div>
+      <div id="availableList" class="course-grid hidden"></div>
+    </div>
+  </main>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/shell.js"></script>
+  <script src="js/courses.js"></script>
+</body>
+</html>

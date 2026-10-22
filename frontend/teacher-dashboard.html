@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Dashboard - Teacher Portal</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header id="app-header"></header>
+  <aside id="app-sidebar"></aside>
+  <div id="sidebar-backdrop"></div>
+
+  <main class="app-main">
+    <div class="page-header">
+      <div>
+        <h1 id="welcomeHeading">Welcome</h1>
+        <div class="subtitle" id="welcomeSubtitle"></div>
+      </div>
+    </div>
+
+    <div id="alertBox" class="alert alert-error"></div>
+    <div id="loadingRow" class="loading-row">Loading your dashboard...</div>
+
+    <div id="dashboardContent" class="hidden">
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-label">Courses</div>
+          <div class="stat-value" id="statCourses">-</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Students</div>
+          <div class="stat-value" id="statStudents">-</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Assignments</div>
+          <div class="stat-value" id="statAssignments">-</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Pending Grading</div>
+          <div class="stat-value" id="statPendingGrading">-</div>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div>
+          <div class="card">
+            <div class="page-header" style="margin-bottom:0;">
+              <h2 class="mt-0">My Courses</h2>
+              <a href="teacher-courses.html" class="btn btn-secondary btn-sm">Manage courses</a>
+            </div>
+            <div id="coursesList"></div>
+          </div>
+        </div>
+
+        <div>
+          <div class="card">
+            <h2>Upcoming Deadlines</h2>
+            <div id="upcomingList"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/shell.js"></script>
+  <script src="js/teacher-dashboard.js"></script>
+</body>
+</html>

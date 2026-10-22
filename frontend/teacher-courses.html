@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>My Courses - Teacher Portal</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header id="app-header"></header>
+  <aside id="app-sidebar"></aside>
+  <div id="sidebar-backdrop"></div>
+
+  <main class="app-main">
+    <div class="page-header">
+      <div>
+        <h1>My Courses</h1>
+        <div class="subtitle">Courses you teach.</div>
+      </div>
+    </div>
+
+    <div id="alertBox" class="alert alert-error"></div>
+    <div id="successBox" class="alert alert-success"></div>
+
+    <div class="card">
+      <h2>Your Courses</h2>
+      <div id="loadingCourses" class="loading-row">Loading your courses...</div>
+      <div id="coursesList" class="course-grid hidden"></div>
+    </div>
+
+    <div class="card" style="max-width:560px;">
+      <h2>Create a New Course</h2>
+      <form id="createCourseForm">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="courseCode">Course code</label>
+            <input type="text" id="courseCode" placeholder="e.g. STEM-101" required />
+          </div>
+          <div class="form-group">
+            <label for="units">Units</label>
+            <input type="number" id="units" min="1" max="12" value="3" required />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="courseName">Course name</label>
+          <input type="text" id="courseName" placeholder="e.g. General Chemistry" required />
+        </div>
+        <div class="form-group">
+          <label for="schedule">Schedule <span class="optional">(optional)</span></label>
+          <input type="text" id="schedule" placeholder="e.g. MWF 9:00-10:00 AM" />
+        </div>
+        <button type="submit" class="btn btn-primary" id="createBtn" style="width:auto;">Create Course</button>
+      </form>
+    </div>
+  </main>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/shell.js"></script>
+  <script src="js/teacher-courses.js"></script>
+</body>
+</html>

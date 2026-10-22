@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Grades - Student Portal</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header id="app-header"></header>
+  <aside id="app-sidebar"></aside>
+  <div id="sidebar-backdrop"></div>
+
+  <main class="app-main">
+    <div class="page-header">
+      <div>
+        <h1>Grades</h1>
+        <div class="subtitle">Your grade standing across all enrolled courses.</div>
+      </div>
+    </div>
+
+    <div id="alertBox" class="alert alert-error"></div>
+    <div id="loadingRow" class="loading-row">Loading grades...</div>
+
+    <div id="gradesContent" class="hidden">
+      <div class="stat-grid" style="grid-template-columns: repeat(3, 1fr);">
+        <div class="stat-card">
+          <div class="stat-label">Overall Percent</div>
+          <div class="stat-value" id="overallPercent">-</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Equivalent Grade</div>
+          <div class="stat-value" id="overallEquivalent">-</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Total Units</div>
+          <div class="stat-value" id="totalUnits">-</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Per-Course Breakdown</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Course</th>
+                <th>Units</th>
+                <th>Graded</th>
+                <th>Percent</th>
+                <th>Final Grade</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="coursesBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/shell.js"></script>
+  <script src="js/grades.js"></script>
+</body>
+</html>

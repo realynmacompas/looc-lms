@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Profile - Teacher Portal</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header id="app-header"></header>
+  <aside id="app-sidebar"></aside>
+  <div id="sidebar-backdrop"></div>
+
+  <main class="app-main">
+    <div class="page-header">
+      <div>
+        <h1>My Profile</h1>
+        <div class="subtitle">Your account information.</div>
+      </div>
+    </div>
+
+    <div id="alertBox" class="alert alert-error"></div>
+    <div id="loadingRow" class="loading-row">Loading profile...</div>
+
+    <div id="profileContent" class="card hidden" style="max-width: 480px;">
+      <div class="list-item">
+        <div class="item-meta">Teacher ID</div>
+        <div class="item-title" id="fTeacherId"></div>
+      </div>
+      <div class="list-item">
+        <div class="item-meta">Name</div>
+        <div class="item-title" id="fName"></div>
+      </div>
+      <div class="list-item">
+        <div class="item-meta">Email</div>
+        <div class="item-title" id="fEmail"></div>
+      </div>
+      <div class="list-item">
+        <div class="item-meta">Department</div>
+        <div class="item-title" id="fDepartment"></div>
+      </div>
+      <div class="list-item">
+        <div class="item-meta">Account created</div>
+        <div class="item-title" id="fCreatedAt"></div>
+      </div>
+      <p class="field-hint" style="margin-top:16px;">
+        Profile editing isn't available yet - the backend doesn't currently have an endpoint to
+        update a teacher's record (only students have one). Ask your developer to add a
+        <code>PUT /api/teacher/{id}</code> endpoint if this is needed.
+      </p>
+    </div>
+  </main>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/shell.js"></script>
+  <script src="js/teacher-profile.js"></script>
+</body>
+</html>

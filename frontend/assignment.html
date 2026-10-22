@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Assignment - Student Portal</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header id="app-header"></header>
+  <aside id="app-sidebar"></aside>
+  <div id="sidebar-backdrop"></div>
+
+  <main class="app-main">
+    <div class="breadcrumb"><a href="courses.html">My Courses</a> / <a id="breadcrumbCourse" href="#">Course</a> / Assignment</div>
+
+    <div id="alertBox" class="alert alert-error"></div>
+    <div id="successBox" class="alert alert-success"></div>
+    <div id="loadingRow" class="loading-row">Loading assignment...</div>
+
+    <div id="assignmentContent" class="hidden">
+      <div class="card">
+        <div class="page-header" style="margin-bottom:0;">
+          <div>
+            <h1 id="assignmentTitle">Assignment</h1>
+            <div class="subtitle" id="assignmentMeta"></div>
+          </div>
+          <div id="statusBadgeWrap"></div>
+        </div>
+        <p id="assignmentDescription" class="text-muted" style="margin-top:14px;"></p>
+        <div id="attachmentWrap"></div>
+      </div>
+
+      <div class="card" id="submissionResultCard" style="display:none;">
+        <h2>Your Submission</h2>
+        <div id="submissionResult"></div>
+      </div>
+
+      <div class="card" id="submissionFormCard">
+        <h2 id="submissionFormTitle">Submit Your Work</h2>
+        <p class="field-hint" id="submissionHint"></p>
+        <form id="submissionForm">
+          <div class="form-group">
+            <label for="content">Answer / Notes</label>
+            <textarea id="content" placeholder="Type your answer, or notes about your submission..."></textarea>
+          </div>
+          <div class="form-group">
+            <label for="fileUrl">Link to your work <span class="optional">(optional)</span></label>
+            <input type="url" id="fileUrl" placeholder="e.g. Google Drive / Docs link" />
+            <div class="field-hint">This portal accepts a link to your file rather than a direct upload.</div>
+          </div>
+          <button type="submit" class="btn btn-primary" id="submitBtn" style="width:auto;">Submit</button>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/shell.js"></script>
+  <script src="js/assignment.js"></script>
+</body>
+</html>

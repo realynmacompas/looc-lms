@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Course - Teacher Portal</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header id="app-header"></header>
+  <aside id="app-sidebar"></aside>
+  <div id="sidebar-backdrop"></div>
+
+  <main class="app-main">
+    <div class="breadcrumb"><a href="teacher-courses.html">My Courses</a> / <span id="breadcrumbCourse">Course</span></div>
+
+    <div id="alertBox" class="alert alert-error"></div>
+    <div id="successBox" class="alert alert-success"></div>
+    <div id="loadingRow" class="loading-row">Loading course...</div>
+
+    <div id="courseContent" class="hidden">
+      <div class="card">
+        <div class="page-header" style="margin-bottom:0;">
+          <div>
+            <h1 id="courseTitle">Course</h1>
+            <div class="subtitle" id="courseMeta"></div>
+          </div>
+          <a id="gradebookLink" href="#" class="btn btn-secondary btn-sm">View Gradebook</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Materials</h2>
+        <div id="materialsList"></div>
+        <hr class="divider" />
+        <h3>Post Material</h3>
+        <form id="materialForm">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="materialTitle">Title</label>
+              <input type="text" id="materialTitle" required />
+            </div>
+            <div class="form-group">
+              <label for="materialType">Type</label>
+              <select id="materialType">
+                <option value="link">Link</option>
+                <option value="pdf">PDF</option>
+                <option value="video">Video</option>
+                <option value="doc">Document</option>
+                <option value="image">Image</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="materialDescription">Description <span class="optional">(optional)</span></label>
+            <textarea id="materialDescription"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="materialUrl">Link / URL</label>
+            <input type="url" id="materialUrl" required />
+          </div>
+          <button type="submit" class="btn btn-primary" id="materialBtn" style="width:auto;">Post Material</button>
+        </form>
+
+        <hr class="divider" />
+        <h3>Post a Quick Announcement</h3>
+        <form id="announcementForm">
+          <div class="form-group">
+            <label for="announcementTitle">Announcement</label>
+            <input type="text" id="announcementTitle" placeholder="e.g. Quiz moved to Friday" required />
+          </div>
+          <div class="form-group">
+            <label for="announcementDescription">Details <span class="optional">(optional)</span></label>
+            <textarea id="announcementDescription"></textarea>
+          </div>
+          <button type="submit" class="btn btn-secondary" id="announcementBtn" style="width:auto;">Post Announcement</button>
+        </form>
+      </div>
+
+      <div class="card">
+        <h2>Assignments</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Assignment</th>
+                <th>Due Date</th>
+                <th>Points</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="assignmentsBody"></tbody>
+          </table>
+        </div>
+        <hr class="divider" />
+        <h3>Create Assignment</h3>
+        <form id="assignmentForm">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="assignmentTitle">Title</label>
+              <input type="text" id="assignmentTitle" required />
+            </div>
+            <div class="form-group">
+              <label for="maxPoints">Max points</label>
+              <input type="number" id="maxPoints" min="1" value="100" required />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="assignmentDescription">Description <span class="optional">(optional)</span></label>
+            <textarea id="assignmentDescription"></textarea>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="dueDate">Due date <span class="optional">(optional)</span></label>
+              <input type="datetime-local" id="dueDate" />
+            </div>
+            <div class="form-group">
+              <label for="attachmentUrl">Attachment link <span class="optional">(optional)</span></label>
+              <input type="url" id="attachmentUrl" />
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary" id="assignmentBtn" style="width:auto;">Create Assignment</button>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/shell.js"></script>
+  <script src="js/teacher-course-detail.js"></script>
+</body>
+</html>

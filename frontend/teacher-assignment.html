@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Submissions - Teacher Portal</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header id="app-header"></header>
+  <aside id="app-sidebar"></aside>
+  <div id="sidebar-backdrop"></div>
+
+  <main class="app-main">
+    <div class="breadcrumb"><a href="teacher-courses.html">My Courses</a> / Submissions</div>
+
+    <div id="alertBox" class="alert alert-error"></div>
+    <div id="successBox" class="alert alert-success"></div>
+    <div id="loadingRow" class="loading-row">Loading submissions...</div>
+
+    <div id="assignmentContent" class="hidden">
+      <div class="card">
+        <h1 id="assignmentTitle">Assignment</h1>
+        <div class="subtitle" id="assignmentMeta"></div>
+      </div>
+
+      <div class="stat-grid" style="grid-template-columns: repeat(3, 1fr);">
+        <div class="stat-card">
+          <div class="stat-label">Total Submissions</div>
+          <div class="stat-value" id="statTotal">-</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Graded</div>
+          <div class="stat-value" id="statGraded">-</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Pending</div>
+          <div class="stat-value" id="statPending">-</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Submissions</h2>
+        <div id="submissionsList"></div>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/shell.js"></script>
+  <script src="js/teacher-assignment.js"></script>
+</body>
+</html>

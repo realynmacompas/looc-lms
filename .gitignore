@@ -1,0 +1,10 @@
+# Backend (.NET) build output and IDE files — never need to be committed
+backend/**/bin/
+backend/**/obj/
+backend/**/.vs/
+backend/**/*.user
+
+# OS clutter
+.DS_Store
+Thumbs.db
+*.log

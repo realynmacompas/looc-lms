@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Profile - Student Portal</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header id="app-header"></header>
+  <aside id="app-sidebar"></aside>
+  <div id="sidebar-backdrop"></div>
+
+  <main class="app-main">
+    <div class="page-header">
+      <div>
+        <h1>My Profile</h1>
+        <div class="subtitle">Update your basic information.</div>
+      </div>
+    </div>
+
+    <div id="alertBox" class="alert alert-error"></div>
+    <div id="successBox" class="alert alert-success"></div>
+    <div id="loadingRow" class="loading-row">Loading profile...</div>
+
+    <div id="profileContent" class="card hidden" style="max-width: 560px;">
+      <form id="profileForm">
+        <div class="form-group">
+          <label>Student ID</label>
+          <input type="text" id="studentId" disabled />
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email address</label>
+          <input type="email" id="email" required />
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="firstName">First name</label>
+            <input type="text" id="firstName" required />
+          </div>
+          <div class="form-group">
+            <label for="lastName">Last name</label>
+            <input type="text" id="lastName" required />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="course">Course / Strand <span class="optional">(optional)</span></label>
+            <input type="text" id="course" />
+          </div>
+          <div class="form-group">
+            <label for="yearLevel">Year / Grade level <span class="optional">(optional)</span></label>
+            <input type="text" id="yearLevel" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="section">Section <span class="optional">(optional)</span></label>
+          <input type="text" id="section" />
+        </div>
+
+        <hr class="divider" />
+        <h2 style="font-size:15px;">Change Password <span class="optional" style="font-weight:400;">(optional)</span></h2>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="newPassword">New password</label>
+            <input type="password" id="newPassword" autocomplete="new-password" minlength="6" placeholder="Leave blank to keep current password" />
+          </div>
+          <div class="form-group">
+            <label for="confirmNewPassword">Confirm new password</label>
+            <input type="password" id="confirmNewPassword" autocomplete="new-password" minlength="6" />
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary" id="saveBtn" style="width:auto;">Save Changes</button>
+      </form>
+    </div>
+  </main>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/shell.js"></script>
+  <script src="js/profile.js"></script>
+</body>
+</html>
