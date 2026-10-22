@@ -21,7 +21,8 @@ builder.Services.AddCors(options =>
     {
         policy
             .WithOrigins(
-                "http://localhost:5600"
+                "http://localhost:5600",
+                "https://looc-lms.vercel.app"
             )
             .AllowAnyHeader()
             .AllowAnyMethod();

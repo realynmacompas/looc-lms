@@ -15,4 +15,4 @@
    ships with this front end for the exact Program.cs change.
    ========================================================= */
 
-const API_BASE_URL = "http://localhost:7028/api";
+const API_BASE_URL = "https://looc-lms.onrender.com/api";
