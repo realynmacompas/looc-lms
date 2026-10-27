@@ -55,6 +55,8 @@ async function apiRequest(path, { method = "GET", body } = {}) {
 const Auth = {
   login: (email, password) =>
     apiRequest("/auth/login", { method: "POST", body: { email, password } }),
+  googleLogin: (idToken) =>
+    apiRequest("/auth/google-login", { method: "POST", body: { idToken } }),
   // payload: { email, password, firstName, lastName, userId, role, course?, yearLevel?, section?, department? }
   register: (payload) =>
     apiRequest("/auth/register", { method: "POST", body: payload }),

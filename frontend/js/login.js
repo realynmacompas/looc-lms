@@ -36,4 +36,36 @@
       loginBtn.textContent = "Sign In";
     }
   });
+
+    // ---------- Google Sign-In ----------
+  const GOOGLE_CLIENT_ID = "829306334462-a554k2iv7nlofeu1e7h4fclo3im4i29d.apps.googleusercontent.com";
+
+  async function handleGoogleCredential(response) {
+    hideAlert(alertBox);
+    try {
+      const profile = await Auth.googleLogin(response.credential);
+      setCurrentUser(profile);
+      window.location.href = homePageFor(profile.role);
+    } catch (err) {
+      if (err.status === 404 && err.data && err.data.email) {
+        // Verified by Google, but no account yet - send them to Register with the email pre-filled.
+        window.location.href = `register.html?email=${encodeURIComponent(err.data.email)}`;
+        return;
+      }
+      showAlert(alertBox, err.message || "Google sign-in failed.");
+    }
+  }
+
+  if (window.google && window.google.accounts && window.google.accounts.id) {
+    google.accounts.id.initialize({
+      client_id: GOOGLE_CLIENT_ID,
+      callback: handleGoogleCredential,
+    });
+    google.accounts.id.renderButton(document.getElementById("googleSignInDiv"), {
+      theme: "outline",
+      size: "large",
+      width: 300,
+    });
+  }
+  
 })();

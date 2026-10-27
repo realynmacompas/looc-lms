@@ -15,6 +15,15 @@
   const teacherFields = document.getElementById("teacherFields");
   const userIdLabel = document.getElementById("userIdLabel");
 
+    // Pre-filled from a Google sign-in where no account existed yet.
+  const params = new URLSearchParams(window.location.search);
+  const prefillEmail = params.get("email");
+  if (prefillEmail) {
+    const emailField = document.getElementById("email");
+    emailField.value = prefillEmail;
+    emailField.readOnly = true;
+  }
+
   function syncRoleFields() {
     const isTeacher = roleTeacher.checked;
     studentFields.classList.toggle("hidden", isTeacher);
