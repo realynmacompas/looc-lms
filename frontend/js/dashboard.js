@@ -21,7 +21,6 @@
       renderCourses(data.courses);
       renderUpcoming(data.upcomingAssignments);
       renderRecentGrades(data.recentGrades);
-      renderAttendance(data.stats);
 
       loadingRow.classList.add("hidden");
       content.classList.remove("hidden");
@@ -101,21 +100,4 @@
       .join("");
   }
 
-  function renderAttendance(stats) {
-    const el = document.getElementById("attendanceSummary");
-    el.innerHTML = `
-      <div class="list-item">
-        <div class="item-meta">Recorded days</div>
-        <div class="item-title">${stats.attendanceDays ?? 0}</div>
-      </div>
-      <div class="list-item">
-        <div class="item-meta">Open (no time-out) days</div>
-        <div class="item-title">${stats.openAttendanceDays ?? 0}</div>
-      </div>
-      <div class="list-item">
-        <div class="item-meta">Last recorded</div>
-        <div class="item-title">${formatDate(stats.lastAttendance)}</div>
-      </div>
-    `;
-  }
 })();

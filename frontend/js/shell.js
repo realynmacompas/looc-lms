@@ -12,14 +12,12 @@ const STUDENT_NAV_LINKS = [
   { key: "dashboard", href: "dashboard.html", icon: "&#8962;", label: "Dashboard" },
   { key: "courses", href: "courses.html", icon: "&#128218;", label: "My Courses" },
   { key: "grades", href: "grades.html", icon: "&#128202;", label: "Grades" },
-  { key: "attendance", href: "attendance.html", icon: "&#128197;", label: "Attendance" },
   { key: "profile", href: "profile.html", icon: "&#128100;", label: "Profile" },
 ];
 
 const TEACHER_NAV_LINKS = [
   { key: "dashboard", href: "teacher-dashboard.html", icon: "&#8962;", label: "Dashboard" },
   { key: "courses", href: "teacher-courses.html", icon: "&#128218;", label: "My Courses" },
-  { key: "attendance", href: "teacher-attendance.html", icon: "&#128197;", label: "My Attendance" },
   { key: "profile", href: "teacher-profile.html", icon: "&#128100;", label: "Profile" },
 ];
 
@@ -132,27 +130,6 @@ function formatDateTime(value) {
 function badgeClass(status) {
   const key = String(status || "").toLowerCase().replace(/\s+/g, "_");
   return `badge badge-${key}`;
-}
-
-/* -----------------------------------------------------------
-   Date helpers for attendance self-service (time in / time out).
-
-   The backend's Attendance/TeacherAttendance tables use a composite
-   primary key of (Id, Date) where Date is meant to be a calendar day,
-   not a timestamp. If we sent a full ISO string with a timezone
-   offset (e.g. via `new Date().toISOString()`), the server would
-   parse it as UTC and could roll it back to the *previous* day for
-   anyone west of UTC - so "today's" record could silently fail to
-   match. todayDateOnly() instead builds a plain "YYYY-MM-DDT00:00:00"
-   string with no timezone marker, using the browser's local date, so
-   it always lands on the day the user actually sees on their clock.
-   ----------------------------------------------------------- */
-function todayDateOnly() {
-  const now = new Date();
-  const y = now.getFullYear();
-  const m = String(now.getMonth() + 1).padStart(2, "0");
-  const d = String(now.getDate()).padStart(2, "0");
-  return `${y}-${m}-${d}T00:00:00`;
 }
 
 /* -----------------------------------------------------------

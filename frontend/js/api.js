@@ -65,34 +65,8 @@ const Auth = {
 const Students = {
   getById: (studentId) => apiRequest(`/student/${encodeURIComponent(studentId)}`),
   getDashboard: (studentId) => apiRequest(`/student/${encodeURIComponent(studentId)}/dashboard`),
-  getAttendance: (studentId) => apiRequest(`/student/${encodeURIComponent(studentId)}/attendance`),
   update: (studentId, payload) =>
     apiRequest(`/student/${encodeURIComponent(studentId)}`, { method: "PUT", body: payload }),
-};
-
-// Self-service time in/out for a student's own attendance row.
-// Requires the AceDbContext.cs composite-key fix (StudentId + Date) -
-// see README "Known limitations" if these calls 500 with a duplicate-key error.
-const Attendance = {
-  // payload: { date, studentId, fullName, timeIn, timeOut?, task?, journal? }
-  create: (payload) => apiRequest("/attendance", { method: "POST", body: payload }),
-  update: (date, studentId, payload) =>
-    apiRequest(`/attendance/${encodeURIComponent(date)}/${encodeURIComponent(studentId)}`, {
-      method: "PUT",
-      body: payload,
-    }),
-};
-
-// Mirrors Attendance above, but for the new TeacherAttendance table/controller.
-const TeacherAttendance = {
-  getForTeacher: (teacherId) => apiRequest(`/teacherattendance/teacher/${encodeURIComponent(teacherId)}`),
-  // payload: { date, teacherId, fullName, timeIn, timeOut?, task?, journal? }
-  create: (payload) => apiRequest("/teacherattendance", { method: "POST", body: payload }),
-  update: (date, teacherId, payload) =>
-    apiRequest(`/teacherattendance/${encodeURIComponent(date)}/${encodeURIComponent(teacherId)}`, {
-      method: "PUT",
-      body: payload,
-    }),
 };
 
 const Courses = {

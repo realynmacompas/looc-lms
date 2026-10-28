@@ -49,7 +49,6 @@
         ${assignments.map((a) => `<th>${escapeHtml(a.title)}<br><span class="text-muted">/${a.maxPoints}</span></th>`).join("")}
         <th>Percent</th>
         <th>Equivalent</th>
-        <th>Attendance</th>
       </tr>`;
 
     if (!data.students || data.students.length === 0) {
@@ -75,9 +74,8 @@
             <div class="text-muted">${escapeHtml(s.studentId)}</div>
           </td>
           ${cells}
-          <td>${s.percent > 0 ? s.percent + "%" : "—"}</td>
+                    <td>${s.percent > 0 ? s.percent + "%" : "—"}</td>
           <td>${s.percent > 0 ? s.equivalent : "—"}</td>
-          <td><a href="teacher-student-attendance.html?studentId=${encodeURIComponent(s.studentId)}&courseId=${courseId}" class="btn btn-secondary btn-sm">View</a></td>
         </tr>`;
       })
       .join("");
