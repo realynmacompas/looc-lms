@@ -19,7 +19,5 @@
         // Convenience (not mapped to DB)
         public string FullName => $"{FirstName} {LastName}".Trim();
 
-        // Navigation property
-        public ICollection<Attendance>? Attendances { get; set; }
     }
 }

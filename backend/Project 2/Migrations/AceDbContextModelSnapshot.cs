@@ -84,46 +84,6 @@ namespace Project_2.Migrations
                     b.ToTable("assignments", (string)null);
                 });
 
-            modelBuilder.Entity("Project_2.Model.Attendance", b =>
-                {
-                    b.Property<string>("StudentId")
-                        .HasMaxLength(45)
-                        .HasColumnType("varchar(45)")
-                        .HasColumnName("student_id");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("date");
-
-                    b.Property<string>("FullName")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("varchar(255)")
-                        .HasColumnName("full_name");
-
-                    b.Property<string>("Journal")
-                        .HasMaxLength(45)
-                        .HasColumnType("varchar(45)")
-                        .HasColumnName("journal");
-
-                    b.Property<string>("Task")
-                        .HasMaxLength(45)
-                        .HasColumnType("varchar(45)")
-                        .HasColumnName("task");
-
-                    b.Property<DateTime>("TimeIn")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("time_in");
-
-                    b.Property<DateTime?>("TimeOut")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("time_out");
-
-                    b.HasKey("StudentId", "Date");
-
-                    b.ToTable("attendance", (string)null);
-                });
-
             modelBuilder.Entity("Project_2.Model.Course", b =>
                 {
                     b.Property<int>("CourseId")
@@ -490,46 +450,6 @@ namespace Project_2.Migrations
                     b.ToTable("teachers", (string)null);
                 });
 
-            modelBuilder.Entity("Project_2.Model.TeacherAttendance", b =>
-                {
-                    b.Property<string>("TeacherId")
-                        .HasMaxLength(45)
-                        .HasColumnType("varchar(45)")
-                        .HasColumnName("teacher_id");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("date");
-
-                    b.Property<string>("FullName")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("varchar(255)")
-                        .HasColumnName("full_name");
-
-                    b.Property<string>("Journal")
-                        .HasMaxLength(45)
-                        .HasColumnType("varchar(45)")
-                        .HasColumnName("journal");
-
-                    b.Property<string>("Task")
-                        .HasMaxLength(45)
-                        .HasColumnType("varchar(45)")
-                        .HasColumnName("task");
-
-                    b.Property<DateTime>("TimeIn")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("time_in");
-
-                    b.Property<DateTime?>("TimeOut")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("time_out");
-
-                    b.HasKey("TeacherId", "Date");
-
-                    b.ToTable("teacher_attendance", (string)null);
-                });
-
             modelBuilder.Entity("Project_2.Model.Assignment", b =>
                 {
                     b.HasOne("Project_2.Model.Course", null)
@@ -537,17 +457,6 @@ namespace Project_2.Migrations
                         .HasForeignKey("CourseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Project_2.Model.Attendance", b =>
-                {
-                    b.HasOne("Project_2.Model.Student", "Student")
-                        .WithMany("Attendances")
-                        .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Student");
                 });
 
             modelBuilder.Entity("Project_2.Model.Enrollment", b =>
@@ -587,27 +496,6 @@ namespace Project_2.Migrations
                         .HasForeignKey("StudentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Project_2.Model.TeacherAttendance", b =>
-                {
-                    b.HasOne("Project_2.Model.Teacher", "Teacher")
-                        .WithMany("Attendances")
-                        .HasForeignKey("TeacherId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Teacher");
-                });
-
-            modelBuilder.Entity("Project_2.Model.Student", b =>
-                {
-                    b.Navigation("Attendances");
-                });
-
-            modelBuilder.Entity("Project_2.Model.Teacher", b =>
-                {
-                    b.Navigation("Attendances");
                 });
 #pragma warning restore 612, 618
         }

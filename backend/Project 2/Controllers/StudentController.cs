@@ -21,7 +21,6 @@ namespace Project_2.Controllers
         public async Task<ActionResult<IEnumerable<object>>> GetStudents()
         {
             var students = await _context.Students
-                .Include(s => s.Attendances)
                 .Select(s => new
                 {
                     s.StudentId,
@@ -45,7 +44,6 @@ namespace Project_2.Controllers
         public async Task<ActionResult<object>> GetStudent(string id)
         {
             var student = await _context.Students
-                .Include(s => s.Attendances)
                 .Where(s => s.StudentId == id)
                 .Select(s => new
                 {
@@ -58,7 +56,6 @@ namespace Project_2.Controllers
                     s.Section,
                     s.IsActive,
                     s.CreatedAt,
-                    Attendances = s.Attendances
                 })
                 .FirstOrDefaultAsync();
 
@@ -136,21 +133,6 @@ namespace Project_2.Controllers
             await _context.SaveChangesAsync();
             return NoContent();
         }
-
-        // ============ GET STUDENT'S ATTENDANCE ============
-        [HttpGet("{id}/attendance")]
-        public async Task<ActionResult<IEnumerable<Attendance>>> GetStudentAttendance(string id)
-        {
-            var attendances = await _context.Attendance
-                .Where(a => a.StudentId == id)
-                .OrderByDescending(a => a.Date)
-                .ToListAsync();
-
-            if (!attendances.Any())
-                return NotFound("No attendance records found for this student");
-
-            return Ok(attendances);
-        }   // ← FIXED: GetStudentAttendance now closes here
 
         // ============ GET STUDENT DASHBOARD ============
         // GET: api/Student/{id}/dashboard
@@ -300,17 +282,6 @@ namespace Project_2.Controllers
                 })
                 .ToList();
 
-            // ---------- 9. ATTENDANCE SUMMARY ----------
-            var attendanceRecords = await _context.Attendance
-                .Where(a => a.StudentId == id)
-                .ToListAsync();
-
-            int attendanceDays = attendanceRecords.Count;
-            int openAttendanceDays = attendanceRecords.Count(a => a.TimeOut == null);
-            DateTime? lastAttendance = attendanceRecords.Any()
-                ? attendanceRecords.Max(a => a.Date)
-                : null;
-
             // ---------- 10. ASSEMBLE RESPONSE ----------
             return Ok(new
             {
@@ -333,9 +304,6 @@ namespace Project_2.Controllers
                     TotalUnits = totalUnits,
                     OverallPercent = overallPercent,
                     OverallEquivalent = PercentToEquivalent(overallPercent),
-                    AttendanceDays = attendanceDays,
-                    OpenAttendanceDays = openAttendanceDays,
-                    LastAttendance = lastAttendance,
                     PendingAssignments = upcoming.Count,
                     OverdueAssignments = overdueCount
                 },

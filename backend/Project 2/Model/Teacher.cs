@@ -13,7 +13,5 @@
 
         // Computed helper (not stored in DB)
         public string FullName => $"{FirstName} {LastName}".Trim();
-
-        public ICollection<TeacherAttendance>? Attendances { get; set; }
     }
 }

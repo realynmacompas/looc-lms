@@ -10,7 +10,6 @@ namespace Project_2.Data
         {
         }
 
-        public DbSet<Attendance> Attendance { get; set; }
         public DbSet<Student> Students { get; set; }
         public DbSet<Course> Courses { get; set; }
         public DbSet<Enrollment> Enrollments { get; set; }
@@ -18,31 +17,10 @@ namespace Project_2.Data
         public DbSet<Assignment> Assignments { get; set; }
         public DbSet<Submission> Submissions { get; set; }
         public DbSet<Teacher> Teachers { get; set; }
-        public DbSet<TeacherAttendance> TeacherAttendance { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
-            // ============ ATTENDANCE ============
-            modelBuilder.Entity<Attendance>(entity =>
-            {
-                entity.ToTable("attendance");
-                entity.HasKey(e => new { e.StudentId, e.Date });
-
-                entity.Property(e => e.Date).HasColumnName("date").IsRequired();
-                entity.Property(e => e.StudentId).HasColumnName("student_id").HasMaxLength(45).IsRequired();
-                entity.Property(e => e.FullName).HasColumnName("full_name").HasMaxLength(255).IsRequired();
-                entity.Property(e => e.TimeIn).HasColumnName("time_in").IsRequired();
-                entity.Property(e => e.TimeOut).HasColumnName("time_out").IsRequired(false);
-                entity.Property(e => e.Task).HasColumnName("task").HasMaxLength(45).IsRequired(false);
-                entity.Property(e => e.Journal).HasColumnName("journal").HasMaxLength(45).IsRequired(false);
-
-                entity.HasOne(e => e.Student)
-                    .WithMany(s => s.Attendances)
-                    .HasForeignKey(e => e.StudentId)
-                    .OnDelete(DeleteBehavior.Cascade);
-            });
 
             // ============ STUDENTS ============
             modelBuilder.Entity<Student>(entity =>
@@ -183,44 +161,23 @@ namespace Project_2.Data
                     .WithMany()
                     .HasForeignKey(e => e.StudentId)
                     .OnDelete(DeleteBehavior.Cascade);
-
-                // ============ TEACHERS ============
-                modelBuilder.Entity<Teacher>(entity =>
-                {
-                    entity.ToTable("teachers");
-                    entity.HasKey(e => e.TeacherId);
-                    entity.Property(e => e.TeacherId).HasColumnName("teacher_id").HasMaxLength(45).IsRequired();
-                    entity.Property(e => e.Email).HasColumnName("email").HasMaxLength(255).IsRequired();
-                    entity.HasIndex(e => e.Email).IsUnique();
-                    entity.Property(e => e.PasswordHash).HasColumnName("password_hash").HasMaxLength(255).IsRequired();
-                    entity.Property(e => e.FirstName).HasColumnName("first_name").HasMaxLength(100).IsRequired();
-                    entity.Property(e => e.LastName).HasColumnName("last_name").HasMaxLength(100).IsRequired();
-                    entity.Property(e => e.Department).HasColumnName("department").HasMaxLength(100).IsRequired(false);
-                    entity.Property(e => e.IsActive).HasColumnName("is_active").HasDefaultValue(true);
-                    entity.Property(e => e.CreatedAt).HasColumnName("created_at").HasDefaultValueSql("CURRENT_TIMESTAMP");
-                    entity.Ignore(e => e.FullName);
-                });
-
-                // ============ TEACHER ATTENDANCE ============
-                modelBuilder.Entity<TeacherAttendance>(entity =>
-                {
-                    entity.ToTable("teacher_attendance");
-                    entity.HasKey(e => new { e.TeacherId, e.Date });
-
-                    entity.Property(e => e.Date).HasColumnName("date").IsRequired();
-                    entity.Property(e => e.TeacherId).HasColumnName("teacher_id").HasMaxLength(45).IsRequired();
-                    entity.Property(e => e.FullName).HasColumnName("full_name").HasMaxLength(255).IsRequired();
-                    entity.Property(e => e.TimeIn).HasColumnName("time_in").IsRequired();
-                    entity.Property(e => e.TimeOut).HasColumnName("time_out").IsRequired(false);
-                    entity.Property(e => e.Task).HasColumnName("task").HasMaxLength(45).IsRequired(false);
-                    entity.Property(e => e.Journal).HasColumnName("journal").HasMaxLength(45).IsRequired(false);
-
-                    entity.HasOne(e => e.Teacher)
-                        .WithMany(t => t.Attendances)
-                        .HasForeignKey(e => e.TeacherId)
-                        .OnDelete(DeleteBehavior.Cascade);
-               
             });
+
+            // ============ TEACHERS ============
+            modelBuilder.Entity<Teacher>(entity =>
+            {
+                entity.ToTable("teachers");
+                entity.HasKey(e => e.TeacherId);
+                entity.Property(e => e.TeacherId).HasColumnName("teacher_id").HasMaxLength(45).IsRequired();
+                entity.Property(e => e.Email).HasColumnName("email").HasMaxLength(255).IsRequired();
+                entity.HasIndex(e => e.Email).IsUnique();
+                entity.Property(e => e.PasswordHash).HasColumnName("password_hash").HasMaxLength(255).IsRequired();
+                entity.Property(e => e.FirstName).HasColumnName("first_name").HasMaxLength(100).IsRequired();
+                entity.Property(e => e.LastName).HasColumnName("last_name").HasMaxLength(100).IsRequired();
+                entity.Property(e => e.Department).HasColumnName("department").HasMaxLength(100).IsRequired(false);
+                entity.Property(e => e.IsActive).HasColumnName("is_active").HasDefaultValue(true);
+                entity.Property(e => e.CreatedAt).HasColumnName("created_at").HasDefaultValueSql("CURRENT_TIMESTAMP");
+                entity.Ignore(e => e.FullName);
             });
         }
     }
