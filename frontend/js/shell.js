@@ -35,27 +35,24 @@ function renderShell(activeKey) {
   if (header) {
     header.className = "app-header";
     header.innerHTML = `
-      <div style="display:flex; align-items:center; gap:8px;">
-        <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">&#9776;</button>
-        <div class="brand">
-          <span class="badge">LIS</span>
-          <span>
-            Looc Integrated School
-            <small>${isTeacher ? "Teacher Portal" : "Student Portal"}</small>
-          </span>
-        </div>
-      </div>
-      <div class="header-user">
-        <span class="user-name">${escapeHtml(user.firstName)} ${escapeHtml(user.lastName)}</span>
-        <button class="logout-link" id="logoutBtn" type="button">Log out</button>
+      <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">&#9776;</button>
+      <div class="brand">
+        <img src="images/school-seal.png" alt="" class="brand-seal-sm">
+        <span>Looc Integrated School</span>
       </div>
     `;
-    document.getElementById("logoutBtn").addEventListener("click", logout);
   }
 
   if (sidebar) {
     sidebar.className = "app-sidebar";
     sidebar.innerHTML = `
+      <div class="sidebar-brand">
+        <img src="images/school-seal.png" alt="Looc Integrated School seal" class="sidebar-seal">
+        <div style="min-width:0;">
+          <div class="sidebar-school-name">Looc Integrated<br>School</div>
+          <div class="sidebar-portal-label">${isTeacher ? "Teacher Portal" : "Student Portal"}</div>
+        </div>
+      </div>
       <nav>
         ${navLinks.map(
           (link) => `
@@ -64,7 +61,22 @@ function renderShell(activeKey) {
           </a>`
         ).join("")}
       </nav>
+      <div class="sidebar-user">
+        <div class="sidebar-user-row">
+          <div class="sidebar-avatar">${initials(user)}</div>
+          <div style="min-width:0;">
+            <div class="sidebar-user-name">${escapeHtml(user.firstName)} ${escapeHtml(user.lastName)}</div>
+            <div class="sidebar-user-role">${escapeHtml(
+              isTeacher
+                ? user.department || "Teacher"
+                : [user.course, user.yearLevel, user.section].filter(Boolean).join(" · ") || "Student"
+            )}</div>
+          </div>
+        </div>
+        <button class="logout-link" id="logoutBtn" type="button">Log out</button>
+      </div>
     `;
+    document.getElementById("logoutBtn").addEventListener("click", logout);
   }
 
   if (backdrop) {
@@ -79,6 +91,12 @@ function renderShell(activeKey) {
       backdrop.classList.toggle("open");
     });
   }
+}
+
+function initials(user) {
+  const a = (user.firstName || "").charAt(0);
+  const b = (user.lastName || "").charAt(0);
+  return (a + b).toUpperCase() || "U";
 }
 
 function closeMobileMenu() {

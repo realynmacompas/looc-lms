@@ -1,28 +1,44 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Lexend:wght@600;700;800&display=swap');
+
 /* =========================================================
-   Looc Integrated School - Student Portal
+   Looc Integrated School - Student/Teacher Portal
    Base styles / design tokens
    ========================================================= */
 
 :root {
-  --color-primary: #0b3d91;      /* DepEd blue */
-  --color-primary-dark: #082a66;
-  --color-primary-light: #e8eefb;
-  --color-accent: #f2b705;       /* gold accent */
-  --color-bg: #f4f6fa;
+  --navy: #15127f;
+  --navy-dark: #0e0c56;
+  --navy-deep: #090835;
+  --navy-light: #f0effd;
+  --gold: #e0953a;
+  --ember: #d9651f;
+
+  --color-primary: var(--navy);
+  --color-primary-dark: var(--navy-dark);
+  --color-primary-light: var(--navy-light);
+  --color-accent: var(--ember);
+  --color-bg: #f5f7fb;
   --color-surface: #ffffff;
-  --color-border: #dde3ec;
-  --color-text: #1c2531;
-  --color-text-muted: #5b6778;
+  --color-border: #e4e9f2;
+  --color-text: #1a2233;
+  --color-text-muted: #626e82;
   --color-danger: #c0392b;
   --color-danger-bg: #fdecea;
   --color-success: #1e7e34;
   --color-success-bg: #e9f7ef;
-  --color-warning: #8a6d00;
-  --color-warning-bg: #fff8e1;
-  --radius: 8px;
-  --shadow: 0 1px 3px rgba(15, 23, 42, 0.08), 0 1px 2px rgba(15, 23, 42, 0.06);
-  --sidebar-width: 230px;
-  --header-height: 60px;
+  --color-warning: #92720a;
+  --color-warning-bg: #fff6df;
+
+  --font-body: "Inter", "Segoe UI", Roboto, Arial, sans-serif;
+  --font-display: "Lexend", "Inter", "Segoe UI", sans-serif;
+
+  --radius: 14px;
+  --radius-sm: 10px;
+  --radius-lg: 20px;
+  --shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+  --shadow-md: 0 20px 48px -16px rgba(9, 10, 40, 0.28);
+  --sidebar-width: 248px;
+  --header-height: 56px;
 }
 
 * {
@@ -35,7 +51,7 @@ html, body {
 }
 
 body {
-  font-family: "Segoe UI", Roboto, Arial, sans-serif;
+  font-family: var(--font-body);
   background: var(--color-bg);
   color: var(--color-text);
   font-size: 15px;
@@ -52,7 +68,8 @@ a:hover {
 
 h1, h2, h3, h4 {
   margin: 0 0 0.5em 0;
-  font-weight: 600;
+  font-family: var(--font-display);
+  font-weight: 700;
   color: var(--color-text);
 }
 
@@ -71,66 +88,77 @@ button, input, select, textarea {
 
 .auth-page {
   min-height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  background: var(--color-bg);
+}
+
+.auth-brand-panel {
+  flex: 1 1 420px;
+  min-width: 320px;
+  background: linear-gradient(160deg, var(--navy-deep) 0%, var(--navy-dark) 55%, var(--navy) 100%);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 48px;
+}
+
+.auth-brand-panel .seal {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+  margin-bottom: 20px;
+}
+
+.auth-brand-panel h1 {
+  font-size: 25px;
+  line-height: 1.22;
+  max-width: 370px;
+  color: #fff;
+  margin-bottom: 0;
+}
+
+.auth-brand-panel .tagline {
+  font-size: 13px;
+  color: #c3d2f2;
+  margin-top: 9px;
+}
+
+.auth-form-panel {
+  flex: 1 1 420px;
+  min-width: 320px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(180deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
-  padding: 24px;
+  padding: 48px 24px;
 }
 
 .auth-card {
   background: var(--color-surface);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
   width: 100%;
   max-width: 420px;
-  padding: 32px;
-}
-
-.auth-brand {
-  text-align: center;
-  margin-bottom: 24px;
-}
-
-.auth-brand .school-badge {
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  background: var(--color-primary);
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 20px;
-  margin: 0 auto 12px auto;
-}
-
-.auth-brand h1 {
-  font-size: 18px;
-  margin-bottom: 2px;
-}
-
-.auth-brand p {
-  color: var(--color-text-muted);
-  font-size: 13px;
-  margin: 0;
+  padding: 36px 32px;
 }
 
 .auth-card h2 {
-  font-size: 20px;
+  font-size: 22px;
   margin-bottom: 4px;
 }
 
 .auth-subtitle {
   color: var(--color-text-muted);
   font-size: 13.5px;
-  margin-bottom: 20px;
+  margin-bottom: 22px;
 }
 
 .auth-footer {
   text-align: center;
-  margin-top: 16px;
+  margin-top: 18px;
   font-size: 13.5px;
   color: var(--color-text-muted);
 }
@@ -151,8 +179,8 @@ button, input, select, textarea {
 
 label {
   display: block;
-  font-weight: 600;
-  font-size: 13px;
+  font-weight: 700;
+  font-size: 12.5px;
   margin-bottom: 6px;
   color: var(--color-text);
 }
@@ -167,12 +195,13 @@ input[type="email"],
 input[type="password"],
 input[type="date"],
 input[type="url"],
+input[type="number"],
 select,
 textarea {
   width: 100%;
-  padding: 10px 12px;
+  padding: 11px 13px;
   border: 1px solid var(--color-border);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   background: #fff;
   color: var(--color-text);
 }
@@ -193,10 +222,10 @@ textarea {
   align-items: center;
   justify-content: center;
   gap: 6px;
-  padding: 10px 18px;
-  border-radius: 6px;
+  padding: 11px 18px;
+  border-radius: var(--radius-sm);
   border: 1px solid transparent;
-  font-weight: 600;
+  font-weight: 700;
   font-size: 14px;
   cursor: pointer;
   transition: background 0.15s ease;
@@ -206,6 +235,7 @@ textarea {
   background: var(--color-primary);
   color: #fff;
   width: 100%;
+  box-shadow: 0 10px 22px -10px rgba(21, 18, 127, 0.55);
 }
 .btn-primary:hover {
   background: var(--color-primary-dark);
@@ -230,7 +260,7 @@ textarea {
 }
 
 .btn-sm {
-  padding: 6px 12px;
+  padding: 7px 13px;
   font-size: 13px;
 }
 
@@ -244,8 +274,8 @@ textarea {
    ========================================================= */
 
 .alert {
-  padding: 10px 14px;
-  border-radius: 6px;
+  padding: 11px 14px;
+  border-radius: var(--radius-sm);
   font-size: 13.5px;
   margin-bottom: 16px;
   display: none;
@@ -267,11 +297,12 @@ textarea {
 .alert-warning {
   background: var(--color-warning-bg);
   color: var(--color-warning);
-  border: 1px solid rgba(138, 109, 0, 0.25);
+  border: 1px solid rgba(146, 114, 10, 0.25);
 }
 
 /* =========================================================
-   App shell: header + sidebar + main
+   App shell: full-height sidebar + main
+   (mobile adds a slim top bar - see breakpoint below)
    ========================================================= */
 
 .app-shell {
@@ -279,42 +310,154 @@ textarea {
 }
 
 .app-header {
+  display: none;
+}
+
+.app-sidebar {
   position: fixed;
-  top: 0; left: 0; right: 0;
-  height: var(--header-height);
-  background: var(--color-primary);
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: var(--sidebar-width);
+  background: linear-gradient(185deg, var(--navy-dark) 0%, var(--navy-deep) 100%);
   color: #fff;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 16px 0 12px;
+  flex-direction: column;
+  padding: 22px 0;
+  overflow-y: auto;
   z-index: 20;
 }
 
-.app-header .brand {
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 20px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+  margin-bottom: 14px;
+}
+
+.sidebar-seal {
+  width: 46px;
+  height: 46px;
+  object-fit: contain;
+  flex: 0 0 auto;
+}
+
+.sidebar-school-name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 13.5px;
+  line-height: 1.25;
+}
+
+.sidebar-portal-label {
+  font-size: 10.5px;
+  color: #aebde3;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+.app-sidebar nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 4px 12px;
+}
+
+.app-sidebar nav a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  color: #c3d2f2;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 0;
+}
+
+.app-sidebar nav a:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  text-decoration: none;
+}
+
+.app-sidebar nav a.active {
+  background: rgba(217, 101, 31, 0.18);
+  color: #fff;
+  font-weight: 600;
+}
+
+.app-sidebar nav a .icon {
+  width: 18px;
+  text-align: center;
+}
+
+.sidebar-user {
+  margin-top: auto;
+  padding: 16px 20px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
+  padding-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sidebar-user-row {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-weight: 700;
-  font-size: 15px;
 }
 
-.app-header .brand .badge {
+.sidebar-avatar {
   width: 34px;
   height: 34px;
   border-radius: 50%;
-  background: rgba(255,255,255,0.15);
+  background: var(--gold);
+  color: var(--navy-dark);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 14px;
+  font-weight: 700;
+  font-size: 13px;
+  flex: 0 0 auto;
 }
 
-.app-header .brand small {
-  display: block;
-  font-weight: 400;
+.sidebar-user-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebar-user-role {
   font-size: 11px;
-  opacity: 0.85;
+  color: #aebde3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebar-user .logout-link {
+  align-self: flex-start;
+  color: #c3d2f2;
+  opacity: 0.9;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  background: transparent;
+}
+.sidebar-user .logout-link:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  text-decoration: none;
 }
 
 .menu-toggle {
@@ -327,77 +470,11 @@ textarea {
   padding: 4px 8px;
 }
 
-.header-user {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-size: 13.5px;
-}
-
-.header-user .user-name {
-  font-weight: 600;
-}
-
-.header-user .logout-link {
-  color: #fff;
-  opacity: 0.9;
-  border: 1px solid rgba(255,255,255,0.4);
-  padding: 5px 10px;
-  border-radius: 5px;
-  font-size: 12.5px;
-  cursor: pointer;
-  background: transparent;
-}
-.header-user .logout-link:hover {
-  background: rgba(255,255,255,0.12);
-  text-decoration: none;
-}
-
-.app-sidebar {
-  position: fixed;
-  top: var(--header-height);
-  bottom: 0;
-  left: 0;
-  width: var(--sidebar-width);
-  background: #fff;
-  border-right: 1px solid var(--color-border);
-  padding: 16px 10px;
-  overflow-y: auto;
-  z-index: 15;
-}
-
-.app-sidebar nav a {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
-  border-radius: 6px;
-  color: var(--color-text);
-  font-size: 14px;
-  font-weight: 500;
-  margin-bottom: 2px;
-}
-
-.app-sidebar nav a:hover {
-  background: var(--color-primary-light);
-  text-decoration: none;
-}
-
-.app-sidebar nav a.active {
-  background: var(--color-primary);
-  color: #fff;
-}
-
-.app-sidebar nav a .icon {
-  width: 18px;
-  text-align: center;
-}
-
 .app-main {
   margin-left: var(--sidebar-width);
-  margin-top: var(--header-height);
-  padding: 24px;
-  max-width: 1100px;
+  margin-top: 0;
+  padding: 28px 28px 40px;
+  max-width: 1160px;
 }
 
 .sidebar-backdrop {
@@ -405,26 +482,53 @@ textarea {
 }
 
 @media (max-width: 860px) {
+  .app-header {
+    display: flex;
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: var(--header-height);
+    background: var(--navy-dark);
+    color: #fff;
+    align-items: center;
+    padding: 0 14px;
+    z-index: 25;
+  }
+
+  .app-header .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    font-size: 14.5px;
+  }
+
+  .app-header .brand-seal-sm {
+    width: 26px;
+    height: 26px;
+    object-fit: contain;
+  }
+
   .menu-toggle { display: inline-flex; }
 
   .app-sidebar {
     transform: translateX(-100%);
     transition: transform 0.2s ease;
-    box-shadow: 2px 0 10px rgba(0,0,0,0.15);
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.15);
   }
   .app-sidebar.open {
     transform: translateX(0);
   }
   .app-main {
     margin-left: 0;
+    margin-top: var(--header-height);
     padding: 18px;
   }
   .sidebar-backdrop.open {
     display: block;
     position: fixed;
     inset: var(--header-height) 0 0 0;
-    background: rgba(0,0,0,0.35);
-    z-index: 14;
+    background: rgba(0, 0, 0, 0.35);
+    z-index: 19;
   }
 }
 
@@ -442,7 +546,7 @@ textarea {
 }
 
 .page-header h1 {
-  font-size: 22px;
+  font-size: 21px;
 }
 
 .page-header .subtitle {
@@ -467,12 +571,12 @@ textarea {
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
-  padding: 20px;
+  padding: 18px 20px;
   margin-bottom: 20px;
 }
 
 .card h2, .card h3 {
-  font-size: 16px;
+  font-size: 15.5px;
 }
 
 .stat-grid {
@@ -491,21 +595,23 @@ textarea {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
-  padding: 16px;
+  padding: 16px 18px;
   box-shadow: var(--shadow);
 }
 
 .stat-card .stat-label {
-  font-size: 12.5px;
+  font-size: 11.5px;
   color: var(--color-text-muted);
+  font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.03em;
   margin-bottom: 6px;
 }
 
 .stat-card .stat-value {
-  font-size: 24px;
-  font-weight: 700;
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 800;
   color: var(--color-primary);
 }
 
@@ -531,7 +637,7 @@ textarea {
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
-  padding: 16px;
+  padding: 16px 18px;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -605,20 +711,22 @@ table {
 
 th, td {
   text-align: left;
-  padding: 10px 12px;
+  padding: 11px 14px;
   border-bottom: 1px solid var(--color-border);
 }
 
 th {
-  color: var(--color-text-muted);
-  font-weight: 600;
-  font-size: 12.5px;
+  background: var(--color-primary-light);
+  color: var(--color-primary-dark);
+  font-weight: 700;
+  font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.02em;
 }
 
 .table-wrap {
   overflow-x: auto;
+  border-radius: var(--radius-sm);
 }
 
 /* =========================================================
@@ -627,7 +735,7 @@ th {
 
 .badge {
   display: inline-block;
-  padding: 3px 9px;
+  padding: 3px 10px;
   border-radius: 999px;
   font-size: 11.5px;
   font-weight: 700;
@@ -683,7 +791,7 @@ th {
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(15, 23, 42, 0.5);
+  background: rgba(9, 8, 53, 0.55);
   align-items: center;
   justify-content: center;
   padding: 16px;
@@ -697,7 +805,7 @@ th {
 .modal-panel {
   background: var(--color-surface);
   border-radius: var(--radius);
-  box-shadow: var(--shadow), 0 12px 32px rgba(15, 23, 42, 0.25);
+  box-shadow: var(--shadow), 0 12px 32px rgba(9, 8, 53, 0.3);
   width: 100%;
   max-width: 560px;
   max-height: 85vh;
