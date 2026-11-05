@@ -123,7 +123,7 @@
       });
     } catch (err) {
       if (err.status === 404) {
-        tbody.innerHTML = `<tr><td colspan="6" class="empty-state">${escapeHtml(err.message)} <a href="courses.html">Go to My Courses</a>.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" class="empty-state">${escapeHtml(err.message)} <a href="courses.html">Go to My Subjects</a>.</td></tr>`;
       } else {
         tbody.innerHTML = `<tr><td colspan="6" class="empty-state">Could not load assignments: ${escapeHtml(err.message)}</td></tr>`;
       }

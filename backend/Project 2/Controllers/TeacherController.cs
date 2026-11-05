@@ -40,6 +40,34 @@ namespace Project_2.Controllers
             return Ok(teacher);
         }
 
+        // ============ UPDATE TEACHER ============
+        // PUT: api/teacher/{id}
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateTeacher(string id, Teacher teacher)
+        {
+            if (id != teacher.TeacherId)
+                return BadRequest("ID mismatch");
+
+            var existing = await _context.Teachers.FindAsync(id);
+            if (existing == null)
+                return NotFound();
+
+            var existingEmail = await _context.Teachers
+                .AnyAsync(t => t.Email == teacher.Email && t.TeacherId != id);
+
+            if (existingEmail)
+                return BadRequest("Email already exists.");
+
+            existing.Email = teacher.Email;
+            existing.FirstName = teacher.FirstName;
+            existing.LastName = teacher.LastName;
+            existing.Department = teacher.Department;
+            existing.IsActive = teacher.IsActive;
+
+            await _context.SaveChangesAsync();
+            return NoContent();
+        }
+
         // ============ GET TEACHER'S COURSES ============
         // GET: api/teacher/{id}/courses
         [HttpGet("{id}/courses")]

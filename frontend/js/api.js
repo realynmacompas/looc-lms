@@ -60,6 +60,9 @@ const Auth = {
   // payload: { email, password, firstName, lastName, userId, role, course?, yearLevel?, section?, department? }
   register: (payload) =>
     apiRequest("/auth/register", { method: "POST", body: payload }),
+  // payload: { role, userId, currentPassword, newPassword }
+  changePassword: (payload) =>
+    apiRequest("/auth/change-password", { method: "POST", body: payload }),
 };
 
 const Students = {
@@ -120,7 +123,23 @@ const Teachers = {
   getAllSubmissions: (teacherId) => apiRequest(`/teacher/${encodeURIComponent(teacherId)}/submissions`),
   getAssignmentSubmissions: (assignmentId) => apiRequest(`/teacher/assignments/${assignmentId}/submissions`),
   getGradebook: (courseId) => apiRequest(`/teacher/course/${courseId}/gradebook`),
+  update: (teacherId, payload) =>
+    apiRequest(`/teacher/${encodeURIComponent(teacherId)}`, { method: "PUT", body: payload }),
   // payload: { title, description?, url? }
   postAnnouncement: (courseId, payload) =>
     apiRequest(`/teacher/course/${courseId}/announcement`, { method: "POST", body: payload }),
+};
+
+const Events = {
+  // optional { month, year } narrows to that month; omitted returns everything
+  getAll: ({ month, year } = {}) => {
+    const params = new URLSearchParams();
+    if (month) params.set("month", month);
+    if (year) params.set("year", year);
+    const qs = params.toString();
+    return apiRequest(`/events${qs ? `?${qs}` : ""}`);
+  },
+  // payload: { title, description?, eventDate, eventType, createdBy? }
+  create: (payload) => apiRequest("/events", { method: "POST", body: payload }),
+  delete: (eventId) => apiRequest(`/events/${eventId}`, { method: "DELETE" }),
 };

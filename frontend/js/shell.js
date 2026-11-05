@@ -12,20 +12,25 @@ const NAV_ICONS = {
   dashboard: '<rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/>',
   courses: '<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>',
   grades: '<path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>',
-  profile: '<circle cx="12" cy="8" r="4"/><path d="M4 21v-1a7 7 0 0 1 14 0v1"/>',
+  reportCard: '<path d="M8 2v4"/><path d="M16 2v4"/><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/>',
+  calendar: '<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M8 2v4"/><path d="M16 2v4"/><path d="M3 10h18"/>',
+  settings: '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>',
 };
 
 const STUDENT_NAV_LINKS = [
   { key: "dashboard", href: "dashboard.html", icon: NAV_ICONS.dashboard, label: "Dashboard" },
-  { key: "courses", href: "courses.html", icon: NAV_ICONS.courses, label: "My Courses" },
+  { key: "courses", href: "courses.html", icon: NAV_ICONS.courses, label: "My Subjects" },
   { key: "grades", href: "grades.html", icon: NAV_ICONS.grades, label: "Grades" },
-  { key: "profile", href: "profile.html", icon: NAV_ICONS.profile, label: "Profile" },
+  { key: "report-card", href: "report-card.html", icon: NAV_ICONS.reportCard, label: "Report Card" },
+  { key: "calendar", href: "calendar.html", icon: NAV_ICONS.calendar, label: "Calendar of Events" },
+  { key: "settings", href: "settings.html", icon: NAV_ICONS.settings, label: "Settings" },
 ];
 
 const TEACHER_NAV_LINKS = [
   { key: "dashboard", href: "teacher-dashboard.html", icon: NAV_ICONS.dashboard, label: "Dashboard" },
   { key: "courses", href: "teacher-courses.html", icon: NAV_ICONS.courses, label: "My Courses" },
-  { key: "profile", href: "teacher-profile.html", icon: NAV_ICONS.profile, label: "Profile" },
+  { key: "calendar", href: "teacher-calendar.html", icon: NAV_ICONS.calendar, label: "Calendar of Events" },
+  { key: "settings", href: "teacher-settings.html", icon: NAV_ICONS.settings, label: "Settings" },
 ];
 
 function renderShell(activeKey) {

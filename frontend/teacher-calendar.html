@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Calendar of Events - Teacher Portal</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header id="app-header"></header>
+  <aside id="app-sidebar"></aside>
+  <div id="sidebar-backdrop"></div>
+
+  <main class="app-main">
+    <div class="page-header">
+      <div>
+        <h1>Calendar of Events</h1>
+        <div class="subtitle">School-wide events, exams, and holidays. Students see these on their own calendars.</div>
+      </div>
+      <div class="cal-nav">
+        <button type="button" class="btn btn-secondary btn-sm" id="prevMonthBtn" aria-label="Previous month">&larr;</button>
+        <div class="cal-nav-label" id="monthLabel">-</div>
+        <button type="button" class="btn btn-secondary btn-sm" id="nextMonthBtn" aria-label="Next month">&rarr;</button>
+      </div>
+    </div>
+
+    <div id="alertBox" class="alert alert-error"></div>
+    <div id="successBox" class="alert alert-success"></div>
+    <div id="loadingRow" class="loading-row">Loading calendar...</div>
+
+    <div id="calendarContent" class="dashboard-columns hidden">
+      <div class="main-panel panel-card">
+        <div class="cal-dow-row" id="calDowRow"></div>
+        <div class="cal-grid" id="calGrid"></div>
+      </div>
+
+      <div class="side-column">
+        <div class="panel-card compact">
+          <h2>Upcoming</h2>
+          <ul class="agenda-list" id="agendaList"></ul>
+        </div>
+
+        <div class="card">
+          <h2>Add Event</h2>
+          <form id="eventForm">
+            <div class="form-group">
+              <label for="eventTitle">Title</label>
+              <input type="text" id="eventTitle" required />
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="eventDate">Date</label>
+                <input type="date" id="eventDate" required />
+              </div>
+              <div class="form-group">
+                <label for="eventType">Type</label>
+                <select id="eventType">
+                  <option value="school">School event</option>
+                  <option value="exam">Exam</option>
+                  <option value="holiday">Holiday</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="eventDescription">Description <span class="optional">(optional)</span></label>
+              <textarea id="eventDescription"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary" id="eventBtn" style="width: auto;">Add Event</button>
+          </form>
+        </div>
+
+        <div class="panel-card compact">
+          <h2 style="font-size: 13px;">Legend</h2>
+          <div class="cal-legend">
+            <div><span class="cal-legend-dot dot-exam"></span> Exams</div>
+            <div><span class="cal-legend-dot dot-due"></span> Assignment deadlines</div>
+            <div><span class="cal-legend-dot dot-holiday"></span> Holidays / school events</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="eventListCard" class="card hidden">
+      <h2>Events This Month</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Title</th>
+              <th>Type</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="eventListBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/shell.js"></script>
+  <script src="js/calendar-shared.js"></script>
+  <script src="js/teacher-calendar.js"></script>
+</body>
+</html>

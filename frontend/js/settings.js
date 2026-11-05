@@ -1,12 +1,12 @@
 (function () {
   const student = requireRole("student");
   if (!student) return;
-  renderShell("profile");
+  renderShell("settings");
 
   const alertBox = document.getElementById("alertBox");
   const successBox = document.getElementById("successBox");
   const loadingRow = document.getElementById("loadingRow");
-  const content = document.getElementById("profileContent");
+  const content = document.getElementById("settingsContent");
 
   let current = null; // freshest copy from the server (has isActive, etc.)
 
@@ -43,30 +43,22 @@
     const course = document.getElementById("course").value.trim();
     const yearLevel = document.getElementById("yearLevel").value.trim();
     const section = document.getElementById("section").value.trim();
-    const newPassword = document.getElementById("newPassword").value;
-    const confirmNewPassword = document.getElementById("confirmNewPassword").value;
 
     if (!email || !firstName || !lastName) {
       showAlert(alertBox, "Email, first name, and last name are required.");
       return;
     }
-    if (newPassword && newPassword.length < 6) {
-      showAlert(alertBox, "New password must be at least 6 characters long.");
-      return;
-    }
-    if (newPassword !== confirmNewPassword) {
-      showAlert(alertBox, "New password and confirmation do not match.");
-      return;
-    }
 
-    const saveBtn = document.getElementById("saveBtn");
+    const saveBtn = document.getElementById("saveProfileBtn");
     saveBtn.disabled = true;
     saveBtn.textContent = "Saving...";
 
     try {
-      // The API does a full replace of the student record, so we send back
-      // the fields we're not editing (like isActive) exactly as they came
-      // from the server, to avoid accidentally overwriting them.
+      // PUT /api/student/{id} is a full replace, so we send back the
+      // fields we're not editing here (like isActive) exactly as the
+      // server gave them, and an empty password so it's left untouched -
+      // password changes go through the Change Password form below,
+      // which actually verifies the current one first.
       await Students.update(student.userId, {
         studentId: current.studentId,
         email,
@@ -76,21 +68,68 @@
         yearLevel: yearLevel || null,
         section: section || null,
         isActive: current.isActive,
-        passwordHash: newPassword || "", // only hashed server-side if non-empty
+        passwordHash: "",
       });
 
       setCurrentUser({ ...student, email, firstName, lastName, course, yearLevel, section });
-
-      document.getElementById("newPassword").value = "";
-      document.getElementById("confirmNewPassword").value = "";
+      current.email = email;
 
       showAlert(successBox, "Profile updated.", "success");
-      await load();
     } catch (err) {
       showAlert(alertBox, err.message);
     } finally {
       saveBtn.disabled = false;
       saveBtn.textContent = "Save Changes";
     }
+  });
+
+  document.getElementById("passwordForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    hideAlert(alertBox);
+    hideAlert(successBox);
+
+    const currentPassword = document.getElementById("currentPassword").value;
+    const newPassword = document.getElementById("newPassword").value;
+    const confirmNewPassword = document.getElementById("confirmNewPassword").value;
+
+    if (newPassword.length < 8) {
+      showAlert(alertBox, "New password must be at least 8 characters long.");
+      return;
+    }
+    if (newPassword !== confirmNewPassword) {
+      showAlert(alertBox, "New password and confirmation do not match.");
+      return;
+    }
+
+    const saveBtn = document.getElementById("savePasswordBtn");
+    saveBtn.disabled = true;
+    saveBtn.textContent = "Updating...";
+
+    try {
+      await Auth.changePassword({
+        role: "student",
+        userId: student.userId,
+        currentPassword,
+        newPassword,
+      });
+
+      document.getElementById("passwordForm").reset();
+      showAlert(successBox, "Password updated.", "success");
+    } catch (err) {
+      showAlert(alertBox, err.message);
+    } finally {
+      saveBtn.disabled = false;
+      saveBtn.textContent = "Update Password";
+    }
+  });
+
+  // Notification toggles are UI-only for now (see the note on the page) -
+  // there's no backend field to persist them to yet, so this just flips
+  // the switch's own visual state for this visit.
+  document.querySelectorAll(".switch").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const isOn = btn.classList.toggle("on");
+      btn.setAttribute("aria-pressed", String(isOn));
+    });
   });
 })();

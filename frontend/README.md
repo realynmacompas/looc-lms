@@ -15,12 +15,14 @@ portal based on the `role` the server returns.
 | Page | File | Backend endpoints used |
 |---|---|---|
 | Dashboard | `dashboard.html` | `GET /api/student/{id}/dashboard` |
-| My Courses (view/enroll/drop) | `courses.html` | `GET /api/enrollments/student/{id}`, `GET /api/courses`, `POST /api/enrollments`, `PUT /api/enrollments/{id}/status` |
+| My Subjects (view/enroll/drop) | `courses.html` | `GET /api/enrollments/student/{id}`, `GET /api/courses`, `POST /api/enrollments`, `PUT /api/enrollments/{id}/status` |
 | Course detail | `course-detail.html` | `GET /api/courses/{id}`, `GET /api/materials/course/{id}`, `GET /api/grades/course/{courseId}/student/{studentId}` |
 | Assignment (view/submit/update) | `assignment.html` | `GET /api/assignments/{id}`, `GET /api/submissions/student/{id}`, `POST /api/submissions`, `PUT /api/submissions/{id}` |
 | Grades overview | `grades.html` | `GET /api/grades/student/{id}` |
+| Report Card (read-only summary, see note below) | `report-card.html` | `GET /api/grades/student/{id}` |
+| Calendar of Events (school events + assignment deadlines) | `calendar.html` | `GET /api/events`, `GET /api/assignments/upcoming/{id}` |
 | Attendance / DTR log (student logs their own time in/out) | `attendance.html` | `GET /api/student/{id}/attendance`, `POST /api/attendance`, `PUT /api/attendance/{date}/{studentId}` |
-| Profile (edit info + password) | `profile.html` | `GET /api/student/{id}`, `PUT /api/student/{id}` |
+| Settings (edit info + change password) | `settings.html` | `GET /api/student/{id}`, `PUT /api/student/{id}`, `POST /api/auth/change-password` |
 
 **Teacher portal** (new):
 
@@ -33,7 +35,8 @@ portal based on the `role` the server returns.
 | Gradebook (+ link to a student's attendance) | `teacher-gradebook.html` | `GET /api/teacher/course/{id}/gradebook` |
 | My Attendance (teacher logs their own time in/out) | `teacher-attendance.html` | `GET /api/teacherattendance/teacher/{id}`, `POST /api/teacherattendance`, `PUT /api/teacherattendance/{date}/{teacherId}` |
 | A student's attendance (read-only, view only, no edit) | `teacher-student-attendance.html` | `GET /api/student/{id}` (header info), `GET /api/student/{id}/attendance` |
-| Profile (read-only) | `teacher-profile.html` | `GET /api/teacher/{id}` |
+| Calendar of Events (create/delete school events) | `teacher-calendar.html` | `GET /api/events`, `POST /api/events`, `DELETE /api/events/{id}` |
+| Settings (edit info + change password) | `teacher-settings.html` | `GET /api/teacher/{id}`, `PUT /api/teacher/{id}`, `POST /api/auth/change-password` |
 
 Every fetch call lives in `js/api.js` and maps 1:1 to a controller action. The attendance rows
 above are the exception - they map to controller actions that **do not exist in your backend
@@ -77,6 +80,21 @@ auth contract, so the front end's session handling and every page that used it w
 
 ## Backend changes this update depends on
 
+**Events table needs a migration.** `Model/Event.cs`, the `Events` DbSet + `OnModelCreating` block
+in `Data/AceDbContext.cs`, and `Controllers/EventsController.cs` are all written and in the repo,
+but there's no `dotnet`/`dotnet-ef` CLI available in the environment this front end was built in,
+so the actual EF Core migration (which creates the `events` table in MySQL) could not be generated
+or run from here. Before `calendar.html`/`teacher-calendar.html` will work, run, from the backend
+project folder:
+
+```
+dotnet ef migrations add AddEventsTable
+dotnet ef database update
+```
+
+Everything else below (change-password endpoint, teacher profile PUT) is a normal column-less
+addition to existing tables, so it needs no new migration.
+
 Attendance self-service (students logging their own time in/out, teachers having their own
 separate daily log) needed backend changes I can't make for you - `Data/AceDbContext.cs` and the
 `Controllers/` folder are C# you're actively working in, so these are described here rather than
@@ -108,9 +126,12 @@ submission, post an announcement, etc.) currently accepts requests from anyone w
 API, not just the account it should belong to. Fine for a school project prototype; needs real
 `[Authorize]`-based auth (e.g. JWT issued at login) before it's safe to treat as production.
 
-**2. Teacher profile editing isn't available.** Unlike students, there's no `PUT /api/teacher/{id}`
-endpoint in your backend, so `teacher-profile.html` is read-only. Add that endpoint (mirroring
-`StudentController.UpdateStudent`) if teachers should be able to edit their own info.
+**2. Report Card has no grading quarters.** `report-card.html` shows the same running average as
+`grades.html` (just presented as a read-only summary) because the backend has no concept of
+grading periods - there's no `Quarter` column anywhere in `Assignment`/`Submission`, so a real
+1st-4th quarter breakdown or a DepEd Form 138-style printout isn't possible without adding that to
+the schema first. Worth knowing this is a simplification, not a finished report card, if this gets
+shown to someone expecting the real DepEd format.
 
 **3. Course-to-teacher linking is by plain text, not a real relationship.** `Course.TeacherId` /
 `TeacherName` are free strings, not a foreign key into the `teachers` table - nothing stops two
@@ -142,12 +163,12 @@ read-only view (no edit is possible from this page), but it's the same "no real 
 frontend/
   index.html, register.html                    shared auth
   dashboard.html, courses.html, course-detail.html,
-  assignment.html, grades.html, attendance.html,
-  profile.html                                  student portal
+  assignment.html, grades.html, report-card.html,
+  calendar.html, attendance.html, settings.html student portal
   teacher-dashboard.html, teacher-courses.html,
   teacher-course-detail.html, teacher-assignment.html,
-  teacher-gradebook.html, teacher-profile.html,
-  teacher-attendance.html,
+  teacher-gradebook.html, teacher-calendar.html,
+  teacher-attendance.html, teacher-settings.html,
   teacher-student-attendance.html               teacher portal
   css/style.css
   js/
@@ -156,11 +177,13 @@ frontend/
     auth.js          localStorage "session" helpers (role-aware)
     shell.js          shared header/sidebar (nav differs by role) + UI helpers,
                        plus todayDateOnly()/isSameCalendarDate() date helpers
+    calendar-shared.js  month-grid + agenda rendering, shared by both calendar pages
     login.js, register.js                       shared auth pages
     dashboard.js, courses.js, course-detail.js, assignment.js,
-    grades.js, attendance.js, profile.js         student pages
+    grades.js, report-card.js, calendar.js,
+    attendance.js, settings.js                  student pages
     teacher-dashboard.js, teacher-courses.js, teacher-course-detail.js,
-    teacher-assignment.js, teacher-gradebook.js, teacher-profile.js,
-    teacher-attendance.js,
+    teacher-assignment.js, teacher-gradebook.js, teacher-calendar.js,
+    teacher-attendance.js, teacher-settings.js,
     teacher-student-attendance.js                teacher pages
 ```

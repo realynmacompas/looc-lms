@@ -136,6 +136,48 @@ namespace Project_2.Controllers
             return NotFound(new { email = payload.Email, firstName = payload.GivenName, lastName = payload.FamilyName });
         }
 
+        // ============ CHANGE PASSWORD ============
+        // POST: api/auth/change-password
+        // Verifies the current password before setting the new one -
+        // same BCrypt pattern as login/register, just for either role.
+        [HttpPost("change-password")]
+        public async Task<IActionResult> ChangePassword(ChangePasswordRequest req)
+        {
+            if (string.IsNullOrWhiteSpace(req.UserId)
+                || string.IsNullOrWhiteSpace(req.CurrentPassword)
+                || string.IsNullOrWhiteSpace(req.NewPassword))
+                return BadRequest("UserId, current password, and new password are all required.");
+
+            if (req.NewPassword.Length < 8)
+                return BadRequest("New password must be at least 8 characters.");
+
+            var role = (req.Role ?? "student").ToLower();
+
+            if (role == "teacher")
+            {
+                var teacher = await _context.Teachers.FirstOrDefaultAsync(t => t.TeacherId == req.UserId);
+                if (teacher == null) return NotFound("Teacher not found.");
+
+                if (!BCrypt.Net.BCrypt.Verify(req.CurrentPassword, teacher.PasswordHash))
+                    return Unauthorized("Current password is incorrect.");
+
+                teacher.PasswordHash = BCrypt.Net.BCrypt.HashPassword(req.NewPassword);
+            }
+            else
+            {
+                var student = await _context.Students.FirstOrDefaultAsync(s => s.StudentId == req.UserId);
+                if (student == null) return NotFound("Student not found.");
+
+                if (!BCrypt.Net.BCrypt.Verify(req.CurrentPassword, student.PasswordHash))
+                    return Unauthorized("Current password is incorrect.");
+
+                student.PasswordHash = BCrypt.Net.BCrypt.HashPassword(req.NewPassword);
+            }
+
+            await _context.SaveChangesAsync();
+            return NoContent();
+        }
+
     // ============ UNIFIED REGISTER ============
     // POST: api/auth/register
     [HttpPost("register")]

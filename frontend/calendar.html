@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Calendar of Events - Student Portal</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header id="app-header"></header>
+  <aside id="app-sidebar"></aside>
+  <div id="sidebar-backdrop"></div>
+
+  <main class="app-main">
+    <div class="page-header">
+      <div>
+        <h1>Calendar of Events</h1>
+        <div class="subtitle">School events plus your own assignment deadlines.</div>
+      </div>
+      <div class="cal-nav">
+        <button type="button" class="btn btn-secondary btn-sm" id="prevMonthBtn" aria-label="Previous month">&larr;</button>
+        <div class="cal-nav-label" id="monthLabel">-</div>
+        <button type="button" class="btn btn-secondary btn-sm" id="nextMonthBtn" aria-label="Next month">&rarr;</button>
+      </div>
+    </div>
+
+    <div id="alertBox" class="alert alert-error"></div>
+    <div id="loadingRow" class="loading-row">Loading calendar...</div>
+
+    <div id="calendarContent" class="dashboard-columns hidden">
+      <div class="main-panel panel-card">
+        <div class="cal-dow-row" id="calDowRow"></div>
+        <div class="cal-grid" id="calGrid"></div>
+      </div>
+
+      <div class="side-column">
+        <div class="panel-card compact">
+          <h2>Upcoming</h2>
+          <ul class="agenda-list" id="agendaList"></ul>
+        </div>
+
+        <div class="panel-card compact">
+          <h2 style="font-size: 13px;">Legend</h2>
+          <div class="cal-legend">
+            <div><span class="cal-legend-dot dot-exam"></span> Exams</div>
+            <div><span class="cal-legend-dot dot-due"></span> Assignment deadlines</div>
+            <div><span class="cal-legend-dot dot-holiday"></span> Holidays / school events</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/shell.js"></script>
+  <script src="js/calendar-shared.js"></script>
+  <script src="js/calendar.js"></script>
+</body>
+</html>

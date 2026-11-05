@@ -17,6 +17,7 @@ namespace Project_2.Data
         public DbSet<Assignment> Assignments { get; set; }
         public DbSet<Submission> Submissions { get; set; }
         public DbSet<Teacher> Teachers { get; set; }
+        public DbSet<Event> Events { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -178,6 +179,24 @@ namespace Project_2.Data
                 entity.Property(e => e.IsActive).HasColumnName("is_active").HasDefaultValue(true);
                 entity.Property(e => e.CreatedAt).HasColumnName("created_at").HasDefaultValueSql("CURRENT_TIMESTAMP");
                 entity.Ignore(e => e.FullName);
+            });
+
+            // ============ EVENTS ============
+            // School-wide calendar entries (holidays, exam periods, school events).
+            // Not tied to a course - that's what makes these different from
+            // Materials/Assignments, which are always scoped to one.
+            modelBuilder.Entity<Event>(entity =>
+            {
+                entity.ToTable("events");
+                entity.HasKey(e => e.EventId);
+
+                entity.Property(e => e.EventId).HasColumnName("event_id");
+                entity.Property(e => e.Title).HasColumnName("title").HasMaxLength(255).IsRequired();
+                entity.Property(e => e.Description).HasColumnName("description").HasColumnType("TEXT").IsRequired(false);
+                entity.Property(e => e.EventDate).HasColumnName("event_date").IsRequired();
+                entity.Property(e => e.EventType).HasColumnName("event_type").HasMaxLength(20).HasDefaultValue("school");
+                entity.Property(e => e.CreatedBy).HasColumnName("created_by").HasMaxLength(45).IsRequired(false);
+                entity.Property(e => e.CreatedAt).HasColumnName("created_at").HasDefaultValueSql("CURRENT_TIMESTAMP");
             });
         }
     }
