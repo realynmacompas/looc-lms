@@ -598,7 +598,7 @@ textarea {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
-  padding: 16px 18px;
+  padding: 14px 16px;
   box-shadow: var(--shadow);
 }
 
@@ -693,197 +693,6 @@ textarea {
   font-size: 12.5px;
   color: var(--color-text-muted);
   margin-top: 2px;
-}
-
-/* Bordered-divider bullet list, used for teacher/schedule lines inside
-   subject cards and for Announcements / Upcoming Assignments entries. */
-.subj-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-}
-.subj-list li {
-  position: relative;
-  padding: 6px 0 6px 14px;
-  border-bottom: 1px solid var(--color-border);
-}
-.subj-list li:last-child { border-bottom: none; }
-.subj-list li::before {
-  content: "•";
-  position: absolute;
-  left: 0;
-  top: 6px;
-  color: var(--color-primary);
-  font-weight: 700;
-}
-
-/* =========================================================
-   Dashboard: stat cards with icon chip, subject cards grid
-   ========================================================= */
-
-.stat-icon-row {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-  margin-bottom: 16px;
-}
-
-@media (max-width: 760px) {
-  .stat-icon-row { grid-template-columns: repeat(2, 1fr); }
-}
-
-.stat-icon-card {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius);
-  padding: 16px 18px;
-  box-shadow: var(--shadow);
-}
-
-.stat-icon-card .stat-icon-row-inner {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.stat-icon-chip {
-  width: 38px;
-  height: 38px;
-  border-radius: 11px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex: 0 0 auto;
-}
-
-.stat-icon-value {
-  font-size: 20px;
-  font-weight: 800;
-  color: var(--color-text);
-}
-
-.stat-icon-label {
-  font-size: 11.5px;
-  color: var(--color-text-muted);
-  font-weight: 600;
-}
-
-.stat-progress {
-  height: 4px;
-  border-radius: 999px;
-  background: var(--color-border);
-  overflow: hidden;
-  margin-top: 12px;
-}
-.stat-progress > div {
-  height: 100%;
-  background: var(--color-primary);
-}
-
-.dashboard-columns {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  align-items: flex-start;
-}
-
-.subjects-panel {
-  flex: 999 1 560px;
-  min-width: 320px;
-}
-
-.side-column {
-  flex: 0 1 320px;
-  min-width: 280px;
-  max-width: 340px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.subject-grid {
-  padding: 16px;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
-  gap: 14px;
-  align-items: stretch;
-}
-
-.subject-card {
-  display: flex;
-  flex-direction: column;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
-  padding: 12px;
-}
-
-.subject-card .subject-name {
-  font-weight: 700;
-  font-size: 12.5px;
-}
-
-.mini-table {
-  margin-top: 10px;
-  font-size: 10.5px;
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
-  overflow: hidden;
-  width: 100%;
-  border-collapse: collapse;
-}
-.mini-table th {
-  text-align: center;
-  padding: 4px 8px;
-  background: var(--color-primary-light);
-  color: var(--color-primary-dark);
-  font-weight: 700;
-  text-transform: none;
-  letter-spacing: normal;
-}
-.mini-table th:first-child { text-align: left; }
-.mini-table td {
-  padding: 4px 8px;
-  text-align: center;
-  font-weight: 700;
-  border-top: 1px solid var(--color-border);
-  border-bottom: none;
-}
-.mini-table td:first-child {
-  text-align: left;
-  font-weight: 600;
-  color: var(--color-text-muted);
-}
-
-.subject-card .subj-list {
-  margin-top: 10px;
-  font-size: 10.5px;
-  color: var(--color-text-muted);
-}
-
-.subject-card .subj-schedule-label {
-  margin-top: 10px;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.03em;
-  color: var(--color-text);
-}
-
-.btn-pill {
-  display: block;
-  text-align: center;
-  margin-top: auto;
-  padding: 8px 0;
-  border: 1.5px solid var(--color-primary);
-  border-radius: 999px;
-  font-size: 10.5px;
-  font-weight: 700;
-  color: var(--color-primary);
-}
-.btn-pill:hover {
-  background: var(--color-primary-light);
-  text-decoration: none;
 }
 
 .empty-state {
@@ -1039,4 +848,246 @@ th {
 
 .modal-body {
   padding: 20px;
+}
+
+/* =========================================================
+   Student dashboard: icon stat row + Upcoming Assignments /
+   Announcements two-column layout
+   ========================================================= */
+
+.stat-icon-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+@media (max-width: 760px) {
+  .stat-icon-row { grid-template-columns: repeat(2, 1fr); }
+}
+
+.stat-icon-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 13px 15px;
+  box-shadow: var(--shadow);
+}
+
+.stat-icon-card.stat-icon-flex {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.stat-icon-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.stat-icon-chip {
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+}
+
+.stat-icon-chip.chip-primary { background: var(--color-primary-light); color: var(--color-primary); }
+.stat-icon-chip.chip-warning { background: var(--color-warning-bg); color: var(--color-warning); }
+.stat-icon-chip.chip-danger  { background: var(--color-danger-bg); color: var(--color-danger); }
+
+.stat-icon-value {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--color-text);
+}
+
+.stat-icon-label {
+  font-size: 11.5px;
+  color: var(--color-text-muted);
+  font-weight: 600;
+}
+
+.stat-progress {
+  height: 4px;
+  border-radius: 999px;
+  background: var(--color-border);
+  overflow: hidden;
+  margin-top: 12px;
+}
+
+.stat-progress > span {
+  display: block;
+  height: 100%;
+  background: var(--color-primary);
+}
+
+.stat-equivalent {
+  font-size: 10.5px;
+  color: var(--color-text-muted);
+  margin-top: 5px;
+  min-height: 1em;
+}
+
+.dashboard-columns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.main-panel {
+  flex: 999 1 560px;
+  min-width: 320px;
+}
+
+.side-column {
+  flex: 0 1 320px;
+  min-width: 280px;
+  max-width: 340px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.panel-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.panel-card.compact {
+  padding: 13px 15px;
+}
+
+.panel-card.compact h2 {
+  margin: 0 0 10px;
+  font-size: 15.5px;
+}
+
+.panel-card-head {
+  padding: 13px 15px;
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.panel-card-head h2 {
+  margin: 0;
+  font-size: 15.5px;
+}
+
+.panel-card-head .view-all {
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+.panel-card-body {
+  padding: 4px 16px 10px;
+}
+
+/* Flat agenda-style list (Upcoming Assignments) */
+.agenda-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.agenda-list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--color-border);
+}
+.agenda-list li:last-child { border-bottom: none; }
+
+.agenda-date {
+  flex: 0 0 auto;
+  width: 38px;
+  text-align: center;
+}
+
+.agenda-date .d {
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1.1;
+  color: var(--color-text);
+}
+
+.agenda-date .m {
+  font-size: 9.5px;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.agenda-date.overdue .d { color: var(--color-danger); }
+
+.agenda-title {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.agenda-meta {
+  font-size: 11.5px;
+  color: var(--color-text-muted);
+}
+
+.pill-overdue {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--color-danger);
+  background: var(--color-danger-bg);
+  padding: 3px 9px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+/* Bordered-divider bullet list (Announcements) */
+.subj-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.subj-list li {
+  position: relative;
+  padding: 6px 0 6px 14px;
+  border-bottom: 1px solid var(--color-border);
+}
+.subj-list li:last-child { border-bottom: none; }
+
+.subj-list li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  top: 6px;
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+.announce-date {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  font-weight: 600;
+}
+
+.announce-title {
+  font-size: 13px;
+  font-weight: 600;
+  margin-top: 2px;
 }
