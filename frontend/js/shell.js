@@ -8,17 +8,24 @@
      <div id="sidebar-backdrop"></div>
    ========================================================= */
 
+const NAV_ICONS = {
+  dashboard: '<rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/>',
+  courses: '<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>',
+  grades: '<path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>',
+  profile: '<circle cx="12" cy="8" r="4"/><path d="M4 21v-1a7 7 0 0 1 14 0v1"/>',
+};
+
 const STUDENT_NAV_LINKS = [
-  { key: "dashboard", href: "dashboard.html", icon: "&#8962;", label: "Dashboard" },
-  { key: "courses", href: "courses.html", icon: "&#128218;", label: "My Courses" },
-  { key: "grades", href: "grades.html", icon: "&#128202;", label: "Grades" },
-  { key: "profile", href: "profile.html", icon: "&#128100;", label: "Profile" },
+  { key: "dashboard", href: "dashboard.html", icon: NAV_ICONS.dashboard, label: "Dashboard" },
+  { key: "courses", href: "courses.html", icon: NAV_ICONS.courses, label: "My Courses" },
+  { key: "grades", href: "grades.html", icon: NAV_ICONS.grades, label: "Grades" },
+  { key: "profile", href: "profile.html", icon: NAV_ICONS.profile, label: "Profile" },
 ];
 
 const TEACHER_NAV_LINKS = [
-  { key: "dashboard", href: "teacher-dashboard.html", icon: "&#8962;", label: "Dashboard" },
-  { key: "courses", href: "teacher-courses.html", icon: "&#128218;", label: "My Courses" },
-  { key: "profile", href: "teacher-profile.html", icon: "&#128100;", label: "Profile" },
+  { key: "dashboard", href: "teacher-dashboard.html", icon: NAV_ICONS.dashboard, label: "Dashboard" },
+  { key: "courses", href: "teacher-courses.html", icon: NAV_ICONS.courses, label: "My Courses" },
+  { key: "profile", href: "teacher-profile.html", icon: NAV_ICONS.profile, label: "Profile" },
 ];
 
 function renderShell(activeKey) {
@@ -54,12 +61,14 @@ function renderShell(activeKey) {
         </div>
       </div>
       <nav>
-        ${navLinks.map(
-          (link) => `
-          <a href="${link.href}" class="${link.key === activeKey ? "active" : ""}">
-            <span class="icon">${link.icon}</span> ${link.label}
-          </a>`
-        ).join("")}
+        ${navLinks.map((link) => {
+          const isActive = link.key === activeKey;
+          return `
+          <a href="${link.href}" class="${isActive ? "active" : ""}">
+            <span class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="${isActive ? "var(--gold-bright, #d9651f)" : "currentColor"}" stroke-width="2" aria-hidden="true">${link.icon}</svg></span>
+            ${link.label}
+          </a>`;
+        }).join("")}
       </nav>
       <div class="sidebar-user">
         <div class="sidebar-user-row">

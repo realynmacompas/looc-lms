@@ -33,8 +33,8 @@
             </td>
             <td>${c.units}</td>
             <td>${c.gradedAssignments}/${c.totalAssignments}</td>
-            <td>${c.percent > 0 ? c.percent + "%" : "—"}</td>
-            <td>${c.finalGrade ?? "—"}</td>
+            <td style="font-weight:700; color:var(--color-primary);">${c.percent > 0 ? c.percent + "%" : "—"}</td>
+            <td style="font-weight:700;">${c.finalGrade ?? "—"}</td>
             <td><a href="course-detail.html?id=${c.courseId}" class="btn btn-secondary btn-sm">Open</a></td>
           </tr>`
           )

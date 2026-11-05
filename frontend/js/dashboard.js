@@ -21,6 +21,7 @@
       renderCourses(data.courses);
       renderUpcoming(data.upcomingAssignments);
       renderRecentGrades(data.recentGrades);
+      renderAnnouncements(data.courses);
 
       loadingRow.classList.add("hidden");
       content.classList.remove("hidden");
@@ -32,8 +33,11 @@
 
   function renderStats(stats) {
     document.getElementById("statCourses").textContent = stats.enrolledCourses ?? 0;
-    document.getElementById("statGrade").textContent =
-      stats.overallPercent > 0 ? `${stats.overallPercent}%` : "—";
+    const percent = stats.overallPercent > 0 ? stats.overallPercent : 0;
+    document.getElementById("statGrade").textContent = percent > 0 ? `${percent}%` : "—";
+    document.getElementById("statGradeBar").style.width = `${percent}%`;
+    document.getElementById("statGradeEquivalent").textContent =
+      percent > 0 ? `${stats.overallEquivalent} equivalent` : "";
     document.getElementById("statPending").textContent = stats.pendingAssignments ?? 0;
     document.getElementById("statOverdue").textContent = stats.overdueAssignments ?? 0;
   }
@@ -47,14 +51,24 @@
     el.innerHTML = courses
       .map(
         (c) => `
-      <div class="list-item">
-        <div>
-          <div class="item-title">
-            <a href="course-detail.html?id=${c.courseId}">${escapeHtml(c.courseCode)} - ${escapeHtml(c.courseName)}</a>
-          </div>
-          <div class="item-meta">${escapeHtml(c.teacherName || "")} &middot; ${c.units} unit(s) &middot; ${c.pendingAssignments} pending</div>
-        </div>
-        <div><span class="${badgeClass(c.enrollmentStatus)}">${c.percent > 0 ? c.percent + "%" : c.enrollmentStatus}</span></div>
+      <div class="subject-card">
+        <div class="subject-name">${escapeHtml(c.courseName)}</div>
+        <table class="mini-table">
+          <thead>
+            <tr><th></th><th>Graded</th><th>Pending</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Assignments</td><td>${c.gradedCount ?? 0} / ${c.totalAssignments ?? 0}</td><td>${c.pendingAssignments ?? 0}</td></tr>
+          </tbody>
+        </table>
+        <ul class="subj-list">
+          <li>${escapeHtml(c.teacherName || "Teacher TBA")}</li>
+        </ul>
+        <div class="subj-schedule-label">SCHEDULE:</div>
+        <ul class="subj-list">
+          <li>${c.schedule ? escapeHtml(c.schedule) : "<span class=\"text-muted\">Not set yet</span>"}</li>
+        </ul>
+        <a href="course-detail.html?id=${c.courseId}" class="btn-pill">View Class</a>
       </div>`
       )
       .join("");
@@ -63,19 +77,19 @@
   function renderUpcoming(items) {
     const el = document.getElementById("upcomingList");
     if (!items || items.length === 0) {
-      el.innerHTML = `<div class="empty-state">No upcoming assignments. You're all caught up.</div>`;
+      el.innerHTML = `<li class="empty-state">No upcoming assignments. You're all caught up.</li>`;
       return;
     }
     el.innerHTML = items
       .map(
         (a) => `
-      <div class="list-item">
-        <div>
-          <div class="item-title"><a href="assignment.html?id=${a.assignmentId}">${escapeHtml(a.title)}</a></div>
-          <div class="item-meta">${escapeHtml(a.courseCode || "")} &middot; ${a.maxPoints} pts</div>
+      <li style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
+        <div style="min-width:0;">
+          <div style="font-size:13px; font-weight:600;"><a href="assignment.html?id=${a.assignmentId}">${escapeHtml(a.title)}</a></div>
+          <div style="font-size:11.5px; color:var(--color-text-muted);">${escapeHtml(a.courseCode || "")}</div>
         </div>
-        <div class="item-meta">Due ${formatDate(a.dueDate)}</div>
-      </div>`
+        <div style="font-size:11.5px; font-weight:700; color:var(--color-warning); background:var(--color-warning-bg); padding:3px 9px; border-radius:999px; white-space:nowrap;">${formatDate(a.dueDate)}</div>
+      </li>`
       )
       .join("");
   }
@@ -83,21 +97,62 @@
   function renderRecentGrades(items) {
     const el = document.getElementById("recentGradesList");
     if (!items || items.length === 0) {
-      el.innerHTML = `<div class="empty-state">No graded work yet.</div>`;
+      el.innerHTML = `<li class="empty-state">No graded work yet.</li>`;
       return;
     }
     el.innerHTML = items
       .map(
         (g) => `
-      <div class="list-item">
-        <div>
-          <div class="item-title">${escapeHtml(g.assignmentTitle || "Assignment")}</div>
-          <div class="item-meta">${escapeHtml(g.courseCode || "")}${g.feedback ? " &middot; " + escapeHtml(g.feedback) : ""}</div>
+      <li style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
+        <div style="min-width:0;">
+          <div style="font-size:13px; font-weight:600;">${escapeHtml(g.assignmentTitle || "Assignment")}</div>
+          <div style="font-size:11.5px; color:var(--color-text-muted);">${escapeHtml(g.courseCode || "")}</div>
         </div>
-        <div class="item-title">${g.score}/${g.maxPoints}</div>
-      </div>`
+        <div style="font-size:13px; font-weight:700; color:var(--color-primary); white-space:nowrap;">${g.score}/${g.maxPoints}</div>
+      </li>`
       )
       .join("");
+  }
+
+  // Announcements aren't on the dashboard endpoint - each one is a Material
+  // (type "announcement") scoped to a single course. Fetch per enrolled
+  // course and merge, newest first.
+  async function renderAnnouncements(courses) {
+    const el = document.getElementById("announcementsList");
+    if (!courses || courses.length === 0) {
+      el.innerHTML = `<li class="empty-state">No announcements yet.</li>`;
+      return;
+    }
+    try {
+      const perCourse = await Promise.all(
+        courses.map((c) =>
+          Materials.getByCourse(c.courseId)
+            .then((list) => (list || []).map((m) => ({ ...m, courseCode: c.courseCode })))
+            .catch(() => [])
+        )
+      );
+      const announcements = perCourse
+        .flat()
+        .filter((m) => m.type === "announcement")
+        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        .slice(0, 5);
+
+      if (announcements.length === 0) {
+        el.innerHTML = `<li class="empty-state">No announcements yet.</li>`;
+        return;
+      }
+      el.innerHTML = announcements
+        .map(
+          (a) => `
+        <li>
+          <div style="font-size:11px; color:var(--color-text-muted); font-weight:600;">${formatDate(a.createdAt).toUpperCase()} &middot; ${escapeHtml(a.courseCode || "")}</div>
+          <div style="font-size:13px; font-weight:600; margin-top:2px;">${escapeHtml(a.title)}</div>
+        </li>`
+        )
+        .join("");
+    } catch {
+      el.innerHTML = `<li class="empty-state">Couldn't load announcements.</li>`;
+    }
   }
 
 })();
