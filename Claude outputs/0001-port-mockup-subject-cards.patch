@@ -1,0 +1,632 @@
+From 8ebcb1b02442a6ea8e3c0d048e87ff1fb55440ad Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Thu, 5 Nov 2026 04:23:51 +0000
+Subject: [PATCH] Port Design mockup's subject-card layout into dashboard,
+ gradebook, and grades
+
+Rebuilds the student dashboard around the mockup's per-course subject
+cards (teacher + schedule as bulleted divider lines, pill "View Class"
+button) backed by real GradedCount/PendingAssignments data instead of
+the mockup's fictional quiz/activity split. Adds a client-side
+Announcements feed assembled from per-course Material records (type
+"announcement") since the dashboard endpoint doesn't expose one.
+Adds the mockup's summary stat row to teacher-gradebook.html, computed
+from the real gradebook payload. Tightens grades.html and login page
+styling to match the same visual language.
+
+Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01HAG55GJ6FJtYXKjD8JHAfC
+---
+ frontend/css/style.css           | 193 ++++++++++++++++++++++++++++++-
+ frontend/dashboard.html          |  89 +++++++++-----
+ frontend/index.html              |   6 +
+ frontend/js/dashboard.js         | 103 +++++++++++++----
+ frontend/js/grades.js            |   4 +-
+ frontend/js/teacher-gradebook.js |  20 ++++
+ frontend/teacher-gradebook.html  |  30 ++++-
+ 7 files changed, 382 insertions(+), 63 deletions(-)
+
+diff --git a/frontend/css/style.css b/frontend/css/style.css
+index f1cb577..3eca6b7 100644
+--- a/frontend/css/style.css
++++ b/frontend/css/style.css
+@@ -598,7 +598,7 @@ textarea {
+   background: var(--color-surface);
+   border: 1px solid var(--color-border);
+   border-radius: var(--radius);
+-  padding: 14px 16px;
++  padding: 16px 18px;
+   box-shadow: var(--shadow);
+ }
+ 
+@@ -695,6 +695,197 @@ textarea {
+   margin-top: 2px;
+ }
+ 
++/* Bordered-divider bullet list, used for teacher/schedule lines inside
++   subject cards and for Announcements / Upcoming Assignments entries. */
++.subj-list {
++  margin: 0;
++  padding: 0;
++  list-style: none;
++  display: flex;
++  flex-direction: column;
++}
++.subj-list li {
++  position: relative;
++  padding: 6px 0 6px 14px;
++  border-bottom: 1px solid var(--color-border);
++}
++.subj-list li:last-child { border-bottom: none; }
++.subj-list li::before {
++  content: "•";
++  position: absolute;
++  left: 0;
++  top: 6px;
++  color: var(--color-primary);
++  font-weight: 700;
++}
++
++/* =========================================================
++   Dashboard: stat cards with icon chip, subject cards grid
++   ========================================================= */
++
++.stat-icon-row {
++  display: grid;
++  grid-template-columns: repeat(4, 1fr);
++  gap: 16px;
++  margin-bottom: 16px;
++}
++
++@media (max-width: 760px) {
++  .stat-icon-row { grid-template-columns: repeat(2, 1fr); }
++}
++
++.stat-icon-card {
++  background: var(--color-surface);
++  border: 1px solid var(--color-border);
++  border-radius: var(--radius);
++  padding: 16px 18px;
++  box-shadow: var(--shadow);
++}
++
++.stat-icon-card .stat-icon-row-inner {
++  display: flex;
++  align-items: center;
++  gap: 12px;
++}
++
++.stat-icon-chip {
++  width: 38px;
++  height: 38px;
++  border-radius: 11px;
++  display: flex;
++  align-items: center;
++  justify-content: center;
++  flex: 0 0 auto;
++}
++
++.stat-icon-value {
++  font-size: 20px;
++  font-weight: 800;
++  color: var(--color-text);
++}
++
++.stat-icon-label {
++  font-size: 11.5px;
++  color: var(--color-text-muted);
++  font-weight: 600;
++}
++
++.stat-progress {
++  height: 4px;
++  border-radius: 999px;
++  background: var(--color-border);
++  overflow: hidden;
++  margin-top: 12px;
++}
++.stat-progress > div {
++  height: 100%;
++  background: var(--color-primary);
++}
++
++.dashboard-columns {
++  display: flex;
++  flex-wrap: wrap;
++  gap: 20px;
++  align-items: flex-start;
++}
++
++.subjects-panel {
++  flex: 999 1 560px;
++  min-width: 320px;
++}
++
++.side-column {
++  flex: 0 1 320px;
++  min-width: 280px;
++  max-width: 340px;
++  display: flex;
++  flex-direction: column;
++  gap: 20px;
++}
++
++.subject-grid {
++  padding: 16px;
++  display: grid;
++  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
++  gap: 14px;
++  align-items: stretch;
++}
++
++.subject-card {
++  display: flex;
++  flex-direction: column;
++  border: 1px solid var(--color-border);
++  border-radius: var(--radius-sm);
++  padding: 12px;
++}
++
++.subject-card .subject-name {
++  font-weight: 700;
++  font-size: 12.5px;
++}
++
++.mini-table {
++  margin-top: 10px;
++  font-size: 10.5px;
++  border: 1px solid var(--color-border);
++  border-radius: 8px;
++  overflow: hidden;
++  width: 100%;
++  border-collapse: collapse;
++}
++.mini-table th {
++  text-align: center;
++  padding: 4px 8px;
++  background: var(--color-primary-light);
++  color: var(--color-primary-dark);
++  font-weight: 700;
++  text-transform: none;
++  letter-spacing: normal;
++}
++.mini-table th:first-child { text-align: left; }
++.mini-table td {
++  padding: 4px 8px;
++  text-align: center;
++  font-weight: 700;
++  border-top: 1px solid var(--color-border);
++  border-bottom: none;
++}
++.mini-table td:first-child {
++  text-align: left;
++  font-weight: 600;
++  color: var(--color-text-muted);
++}
++
++.subject-card .subj-list {
++  margin-top: 10px;
++  font-size: 10.5px;
++  color: var(--color-text-muted);
++}
++
++.subject-card .subj-schedule-label {
++  margin-top: 10px;
++  font-size: 10px;
++  font-weight: 700;
++  letter-spacing: 0.03em;
++  color: var(--color-text);
++}
++
++.btn-pill {
++  display: block;
++  text-align: center;
++  margin-top: auto;
++  padding: 8px 0;
++  border: 1.5px solid var(--color-primary);
++  border-radius: 999px;
++  font-size: 10.5px;
++  font-weight: 700;
++  color: var(--color-primary);
++}
++.btn-pill:hover {
++  background: var(--color-primary-light);
++  text-decoration: none;
++}
++
+ .empty-state {
+   text-align: center;
+   padding: 32px 16px;
+diff --git a/frontend/dashboard.html b/frontend/dashboard.html
+index 20f5684..ff0bc26 100644
+--- a/frontend/dashboard.html
++++ b/frontend/dashboard.html
+@@ -12,53 +12,82 @@
+   <div id="sidebar-backdrop"></div>
+ 
+   <main class="app-main">
+-    <div class="page-header">
+-      <div>
+-        <h1 id="welcomeHeading">Welcome</h1>
+-        <div class="subtitle" id="welcomeSubtitle"></div>
+-      </div>
+-    </div>
++    <h1 id="welcomeHeading" style="font-size:21px;">Welcome</h1>
++    <div class="subtitle" id="welcomeSubtitle" style="margin:-8px 0 16px;"></div>
+ 
+     <div id="alertBox" class="alert alert-error"></div>
+     <div id="loadingRow" class="loading-row">Loading your dashboard...</div>
+ 
+     <div id="dashboardContent" class="hidden">
+-      <div class="stat-grid">
+-        <div class="stat-card">
+-          <div class="stat-label">Enrolled Courses</div>
+-          <div class="stat-value" id="statCourses">-</div>
++      <div class="stat-icon-row">
++        <div class="stat-icon-card">
++          <div class="stat-icon-row-inner">
++            <div class="stat-icon-chip" style="background: var(--color-primary-light);">
++              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
++            </div>
++            <div>
++              <div class="stat-icon-value" id="statGrade">-</div>
++              <div class="stat-icon-label">Overall average</div>
++            </div>
++          </div>
++          <div class="stat-progress"><div id="statGradeBar" style="width:0%;"></div></div>
++          <div style="font-size:10.5px; color:var(--color-text-muted); margin-top:5px;" id="statGradeEquivalent"></div>
+         </div>
+-        <div class="stat-card">
+-          <div class="stat-label">Overall Grade</div>
+-          <div class="stat-value" id="statGrade">-</div>
++
++        <div class="stat-icon-card stat-icon-row-inner">
++          <div class="stat-icon-chip" style="background: var(--color-primary-light);">
++            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
++          </div>
++          <div>
++            <div class="stat-icon-value" id="statCourses">-</div>
++            <div class="stat-icon-label">Subjects</div>
++          </div>
+         </div>
+-        <div class="stat-card">
+-          <div class="stat-label">Pending Assignments</div>
+-          <div class="stat-value" id="statPending">-</div>
++
++        <div class="stat-icon-card stat-icon-row-inner">
++          <div class="stat-icon-chip" style="background: var(--color-warning-bg);">
++            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-warning)" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
++          </div>
++          <div>
++            <div class="stat-icon-value" id="statPending">-</div>
++            <div class="stat-icon-label">Pending</div>
++          </div>
+         </div>
+-        <div class="stat-card">
+-          <div class="stat-label">Overdue Assignments</div>
+-          <div class="stat-value" id="statOverdue">-</div>
++
++        <div class="stat-icon-card stat-icon-row-inner">
++          <div class="stat-icon-chip" style="background: var(--color-danger-bg);">
++            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-danger)" stroke-width="2"><path d="M12 9v4"/><path d="M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>
++          </div>
++          <div>
++            <div class="stat-icon-value" id="statOverdue">-</div>
++            <div class="stat-icon-label">Overdue</div>
++          </div>
+         </div>
+       </div>
+ 
+-      <div class="two-col">
+-        <div>
+-          <div class="card">
+-            <h2>My Courses</h2>
+-            <div id="coursesList"></div>
++      <div class="dashboard-columns">
++        <div class="subjects-panel card" style="padding:0; overflow:hidden;">
++          <div style="padding:16px 18px; border-bottom:1px solid var(--color-border); display:flex; align-items:center; justify-content:space-between;">
++            <h2 style="margin:0; font-size:15.5px;">My Subjects</h2>
++            <a href="courses.html" style="font-size:12.5px; font-weight:600;">View all</a>
++          </div>
++          <div id="coursesList" class="subject-grid"></div>
++        </div>
++
++        <div class="side-column">
++          <div class="card" style="margin-bottom:0;">
++            <h2>Announcements</h2>
++            <ul id="announcementsList" class="subj-list"></ul>
+           </div>
+ 
+-          <div class="card">
++          <div class="card" style="margin-bottom:0;">
+             <h2>Upcoming Assignments</h2>
+-            <div id="upcomingList"></div>
++            <ul id="upcomingList" class="subj-list"></ul>
+           </div>
+-        </div>
+ 
+-        <div>
+-          <div class="card">
++          <div class="card" style="margin-bottom:0;">
+             <h2>Recent Grades</h2>
+-            <div id="recentGradesList"></div>
++            <ul id="recentGradesList" class="subj-list"></ul>
+           </div>
+         </div>
+       </div>
+diff --git a/frontend/index.html b/frontend/index.html
+index 38d442a..e44cbae 100644
+--- a/frontend/index.html
++++ b/frontend/index.html
+@@ -32,6 +32,12 @@
+           <label for="password">Password</label>
+           <input type="password" id="password" name="password" required autocomplete="current-password" />
+         </div>
++        <div style="display:flex; align-items:center; justify-content:space-between; font-size:12.5px; margin-bottom:4px;">
++          <label style="display:flex; align-items:center; gap:7px; font-weight:500; color:var(--color-text-muted);">
++            <input type="checkbox" style="width:auto; margin:0;" /> Remember me
++          </label>
++          <a href="#" style="font-weight:600;">Forgot password?</a>
++        </div>
+         <button type="submit" class="btn btn-primary" id="loginBtn">Sign In</button>
+       </form>
+ 
+diff --git a/frontend/js/dashboard.js b/frontend/js/dashboard.js
+index 5d820dd..592d67c 100644
+--- a/frontend/js/dashboard.js
++++ b/frontend/js/dashboard.js
+@@ -21,6 +21,7 @@
+       renderCourses(data.courses);
+       renderUpcoming(data.upcomingAssignments);
+       renderRecentGrades(data.recentGrades);
++      renderAnnouncements(data.courses);
+ 
+       loadingRow.classList.add("hidden");
+       content.classList.remove("hidden");
+@@ -32,8 +33,11 @@
+ 
+   function renderStats(stats) {
+     document.getElementById("statCourses").textContent = stats.enrolledCourses ?? 0;
+-    document.getElementById("statGrade").textContent =
+-      stats.overallPercent > 0 ? `${stats.overallPercent}%` : "—";
++    const percent = stats.overallPercent > 0 ? stats.overallPercent : 0;
++    document.getElementById("statGrade").textContent = percent > 0 ? `${percent}%` : "—";
++    document.getElementById("statGradeBar").style.width = `${percent}%`;
++    document.getElementById("statGradeEquivalent").textContent =
++      percent > 0 ? `${stats.overallEquivalent} equivalent` : "";
+     document.getElementById("statPending").textContent = stats.pendingAssignments ?? 0;
+     document.getElementById("statOverdue").textContent = stats.overdueAssignments ?? 0;
+   }
+@@ -47,14 +51,24 @@
+     el.innerHTML = courses
+       .map(
+         (c) => `
+-      <div class="list-item">
+-        <div>
+-          <div class="item-title">
+-            <a href="course-detail.html?id=${c.courseId}">${escapeHtml(c.courseCode)} - ${escapeHtml(c.courseName)}</a>
+-          </div>
+-          <div class="item-meta">${escapeHtml(c.teacherName || "")} &middot; ${c.units} unit(s) &middot; ${c.pendingAssignments} pending</div>
+-        </div>
+-        <div><span class="${badgeClass(c.enrollmentStatus)}">${c.percent > 0 ? c.percent + "%" : c.enrollmentStatus}</span></div>
++      <div class="subject-card">
++        <div class="subject-name">${escapeHtml(c.courseName)}</div>
++        <table class="mini-table">
++          <thead>
++            <tr><th></th><th>Graded</th><th>Pending</th></tr>
++          </thead>
++          <tbody>
++            <tr><td>Assignments</td><td>${c.gradedCount ?? 0} / ${c.totalAssignments ?? 0}</td><td>${c.pendingAssignments ?? 0}</td></tr>
++          </tbody>
++        </table>
++        <ul class="subj-list">
++          <li>${escapeHtml(c.teacherName || "Teacher TBA")}</li>
++        </ul>
++        <div class="subj-schedule-label">SCHEDULE:</div>
++        <ul class="subj-list">
++          <li>${c.schedule ? escapeHtml(c.schedule) : "<span class=\"text-muted\">Not set yet</span>"}</li>
++        </ul>
++        <a href="course-detail.html?id=${c.courseId}" class="btn-pill">View Class</a>
+       </div>`
+       )
+       .join("");
+@@ -63,19 +77,19 @@
+   function renderUpcoming(items) {
+     const el = document.getElementById("upcomingList");
+     if (!items || items.length === 0) {
+-      el.innerHTML = `<div class="empty-state">No upcoming assignments. You're all caught up.</div>`;
++      el.innerHTML = `<li class="empty-state">No upcoming assignments. You're all caught up.</li>`;
+       return;
+     }
+     el.innerHTML = items
+       .map(
+         (a) => `
+-      <div class="list-item">
+-        <div>
+-          <div class="item-title"><a href="assignment.html?id=${a.assignmentId}">${escapeHtml(a.title)}</a></div>
+-          <div class="item-meta">${escapeHtml(a.courseCode || "")} &middot; ${a.maxPoints} pts</div>
++      <li style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
++        <div style="min-width:0;">
++          <div style="font-size:13px; font-weight:600;"><a href="assignment.html?id=${a.assignmentId}">${escapeHtml(a.title)}</a></div>
++          <div style="font-size:11.5px; color:var(--color-text-muted);">${escapeHtml(a.courseCode || "")}</div>
+         </div>
+-        <div class="item-meta">Due ${formatDate(a.dueDate)}</div>
+-      </div>`
++        <div style="font-size:11.5px; font-weight:700; color:var(--color-warning); background:var(--color-warning-bg); padding:3px 9px; border-radius:999px; white-space:nowrap;">${formatDate(a.dueDate)}</div>
++      </li>`
+       )
+       .join("");
+   }
+@@ -83,21 +97,62 @@
+   function renderRecentGrades(items) {
+     const el = document.getElementById("recentGradesList");
+     if (!items || items.length === 0) {
+-      el.innerHTML = `<div class="empty-state">No graded work yet.</div>`;
++      el.innerHTML = `<li class="empty-state">No graded work yet.</li>`;
+       return;
+     }
+     el.innerHTML = items
+       .map(
+         (g) => `
+-      <div class="list-item">
+-        <div>
+-          <div class="item-title">${escapeHtml(g.assignmentTitle || "Assignment")}</div>
+-          <div class="item-meta">${escapeHtml(g.courseCode || "")}${g.feedback ? " &middot; " + escapeHtml(g.feedback) : ""}</div>
++      <li style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
++        <div style="min-width:0;">
++          <div style="font-size:13px; font-weight:600;">${escapeHtml(g.assignmentTitle || "Assignment")}</div>
++          <div style="font-size:11.5px; color:var(--color-text-muted);">${escapeHtml(g.courseCode || "")}</div>
+         </div>
+-        <div class="item-title">${g.score}/${g.maxPoints}</div>
+-      </div>`
++        <div style="font-size:13px; font-weight:700; color:var(--color-primary); white-space:nowrap;">${g.score}/${g.maxPoints}</div>
++      </li>`
+       )
+       .join("");
+   }
+ 
++  // Announcements aren't on the dashboard endpoint - each one is a Material
++  // (type "announcement") scoped to a single course. Fetch per enrolled
++  // course and merge, newest first.
++  async function renderAnnouncements(courses) {
++    const el = document.getElementById("announcementsList");
++    if (!courses || courses.length === 0) {
++      el.innerHTML = `<li class="empty-state">No announcements yet.</li>`;
++      return;
++    }
++    try {
++      const perCourse = await Promise.all(
++        courses.map((c) =>
++          Materials.getByCourse(c.courseId)
++            .then((list) => (list || []).map((m) => ({ ...m, courseCode: c.courseCode })))
++            .catch(() => [])
++        )
++      );
++      const announcements = perCourse
++        .flat()
++        .filter((m) => m.type === "announcement")
++        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
++        .slice(0, 5);
++
++      if (announcements.length === 0) {
++        el.innerHTML = `<li class="empty-state">No announcements yet.</li>`;
++        return;
++      }
++      el.innerHTML = announcements
++        .map(
++          (a) => `
++        <li>
++          <div style="font-size:11px; color:var(--color-text-muted); font-weight:600;">${formatDate(a.createdAt).toUpperCase()} &middot; ${escapeHtml(a.courseCode || "")}</div>
++          <div style="font-size:13px; font-weight:600; margin-top:2px;">${escapeHtml(a.title)}</div>
++        </li>`
++        )
++        .join("");
++    } catch {
++      el.innerHTML = `<li class="empty-state">Couldn't load announcements.</li>`;
++    }
++  }
++
+ })();
+diff --git a/frontend/js/grades.js b/frontend/js/grades.js
+index f8a621d..a2a4e54 100644
+--- a/frontend/js/grades.js
++++ b/frontend/js/grades.js
+@@ -33,8 +33,8 @@
+             </td>
+             <td>${c.units}</td>
+             <td>${c.gradedAssignments}/${c.totalAssignments}</td>
+-            <td>${c.percent > 0 ? c.percent + "%" : "—"}</td>
+-            <td>${c.finalGrade ?? "—"}</td>
++            <td style="font-weight:700; color:var(--color-primary);">${c.percent > 0 ? c.percent + "%" : "—"}</td>
++            <td style="font-weight:700;">${c.finalGrade ?? "—"}</td>
+             <td><a href="course-detail.html?id=${c.courseId}" class="btn btn-secondary btn-sm">Open</a></td>
+           </tr>`
+           )
+diff --git a/frontend/js/teacher-gradebook.js b/frontend/js/teacher-gradebook.js
+index 7a3f018..d53127b 100644
+--- a/frontend/js/teacher-gradebook.js
++++ b/frontend/js/teacher-gradebook.js
+@@ -29,6 +29,7 @@
+         `${data.totalStudents} student(s) · ${data.totalAssignments} assignment(s)`;
+ 
+       renderTable(data);
++      renderSummary(data);
+ 
+       loadingRow.classList.add("hidden");
+       content.classList.remove("hidden");
+@@ -38,6 +39,25 @@
+     }
+   }
+ 
++  function renderSummary(data) {
++    const students = data.students || [];
++    const assignments = data.assignments || [];
++
++    const graded = students.map((s) => s.percent).filter((p) => p > 0);
++    const classAverage = graded.length
++      ? (graded.reduce((sum, p) => sum + p, 0) / graded.length).toFixed(1) + "%"
++      : "—";
++
++    const fullyGraded = assignments.filter((a) =>
++      students.length > 0 &&
++      students.every((s) => (s.grades || []).find((g) => g.assignmentId === a.assignmentId)?.status === "graded")
++    ).length;
++
++    document.getElementById("statClassAverage").textContent = classAverage;
++    document.getElementById("statStudentCount").textContent = data.totalStudents ?? students.length;
++    document.getElementById("statAssignmentsGraded").textContent = `${fullyGraded} / ${assignments.length}`;
++  }
++
+   function renderTable(data) {
+     const head = document.getElementById("gradebookHead");
+     const body = document.getElementById("gradebookBody");
+diff --git a/frontend/teacher-gradebook.html b/frontend/teacher-gradebook.html
+index 9281b35..9f712cd 100644
+--- a/frontend/teacher-gradebook.html
++++ b/frontend/teacher-gradebook.html
+@@ -17,18 +17,36 @@
+     <div id="alertBox" class="alert alert-error"></div>
+     <div id="loadingRow" class="loading-row">Loading gradebook...</div>
+ 
+-    <div id="gradebookContent" class="card hidden">
++    <div id="gradebookContent" class="hidden">
+       <div class="page-header" style="margin-bottom:12px;">
+         <div>
+           <h1 id="courseTitle">Gradebook</h1>
+           <div class="subtitle" id="courseMeta"></div>
+         </div>
+       </div>
+-      <div class="table-wrap">
+-        <table>
+-          <thead id="gradebookHead"></thead>
+-          <tbody id="gradebookBody"></tbody>
+-        </table>
++
++      <div class="stat-grid" style="grid-template-columns: repeat(3, 1fr);">
++        <div class="stat-card">
++          <div class="stat-label">Class Average</div>
++          <div class="stat-value" id="statClassAverage">-</div>
++        </div>
++        <div class="stat-card">
++          <div class="stat-label">Students</div>
++          <div class="stat-value" id="statStudentCount">-</div>
++        </div>
++        <div class="stat-card">
++          <div class="stat-label">Assignments Graded</div>
++          <div class="stat-value" id="statAssignmentsGraded">-</div>
++        </div>
++      </div>
++
++      <div class="card" style="padding:0; overflow:hidden;">
++        <div class="table-wrap">
++          <table>
++            <thead id="gradebookHead"></thead>
++            <tbody id="gradebookBody"></tbody>
++          </table>
++        </div>
+       </div>
+     </div>
+   </main>
+-- 
+2.43.0
+

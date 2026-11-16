@@ -1,0 +1,205 @@
+/* =========================================================
+   Renders the shared header + sidebar into every protected page.
+   Each page must call renderShell("dashboard") (etc.) after
+   requireRole("student"|"teacher") succeeds, and must have these three empty
+   elements in its <body>:
+     <header id="app-header"></header>
+     <aside id="app-sidebar"></aside>
+     <div id="sidebar-backdrop"></div>
+   ========================================================= */
+
+const STUDENT_NAV_LINKS = [
+  { key: "dashboard", href: "dashboard.html", icon: "&#8962;", label: "Dashboard" },
+  { key: "courses", href: "courses.html", icon: "&#128218;", label: "My Courses" },
+  { key: "grades", href: "grades.html", icon: "&#128202;", label: "Grades" },
+  { key: "profile", href: "profile.html", icon: "&#128100;", label: "Profile" },
+];
+
+const TEACHER_NAV_LINKS = [
+  { key: "dashboard", href: "teacher-dashboard.html", icon: "&#8962;", label: "Dashboard" },
+  { key: "courses", href: "teacher-courses.html", icon: "&#128218;", label: "My Courses" },
+  { key: "profile", href: "teacher-profile.html", icon: "&#128100;", label: "Profile" },
+];
+
+function renderShell(activeKey) {
+  const user = getCurrentUser();
+  if (!user) return;
+
+  const isTeacher = user.role === "teacher";
+  const navLinks = isTeacher ? TEACHER_NAV_LINKS : STUDENT_NAV_LINKS;
+
+  const header = document.getElementById("app-header");
+  const sidebar = document.getElementById("app-sidebar");
+  const backdrop = document.getElementById("sidebar-backdrop");
+
+  if (header) {
+    header.className = "app-header";
+    header.innerHTML = `
+      <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">&#9776;</button>
+      <div class="brand">
+        <img src="images/school-seal.png" alt="" class="brand-seal-sm">
+        <span>Looc Integrated School</span>
+      </div>
+    `;
+  }
+
+  if (sidebar) {
+    sidebar.className = "app-sidebar";
+    sidebar.innerHTML = `
+      <div class="sidebar-brand">
+        <img src="images/school-seal.png" alt="Looc Integrated School seal" class="sidebar-seal">
+        <div style="min-width:0;">
+          <div class="sidebar-school-name">Looc Integrated<br>School</div>
+          <div class="sidebar-portal-label">${isTeacher ? "Teacher Portal" : "Student Portal"}</div>
+        </div>
+      </div>
+      <nav>
+        ${navLinks.map(
+          (link) => `
+          <a href="${link.href}" class="${link.key === activeKey ? "active" : ""}">
+            <span class="icon">${link.icon}</span> ${link.label}
+          </a>`
+        ).join("")}
+      </nav>
+      <div class="sidebar-user">
+        <div class="sidebar-user-row">
+          <div class="sidebar-avatar">${initials(user)}</div>
+          <div style="min-width:0;">
+            <div class="sidebar-user-name">${escapeHtml(user.firstName)} ${escapeHtml(user.lastName)}</div>
+            <div class="sidebar-user-role">${escapeHtml(
+              isTeacher
+                ? user.department || "Teacher"
+                : [user.course, user.yearLevel, user.section].filter(Boolean).join(" · ") || "Student"
+            )}</div>
+          </div>
+        </div>
+        <button class="logout-link" id="logoutBtn" type="button">Log out</button>
+      </div>
+    `;
+    document.getElementById("logoutBtn").addEventListener("click", logout);
+  }
+
+  if (backdrop) {
+    backdrop.className = "sidebar-backdrop";
+    backdrop.addEventListener("click", closeMobileMenu);
+  }
+
+  const toggleBtn = document.getElementById("menuToggle");
+  if (toggleBtn) {
+    toggleBtn.addEventListener("click", () => {
+      sidebar.classList.toggle("open");
+      backdrop.classList.toggle("open");
+    });
+  }
+}
+
+function initials(user) {
+  const a = (user.firstName || "").charAt(0);
+  const b = (user.lastName || "").charAt(0);
+  return (a + b).toUpperCase() || "U";
+}
+
+function closeMobileMenu() {
+  const sidebar = document.getElementById("app-sidebar");
+  const backdrop = document.getElementById("sidebar-backdrop");
+  if (sidebar) sidebar.classList.remove("open");
+  if (backdrop) backdrop.classList.remove("open");
+}
+
+function escapeHtml(str) {
+  if (str === null || str === undefined) return "";
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function showAlert(el, message, type = "error") {
+  if (!el) return;
+  el.textContent = message;
+  el.className = `alert alert-${type} show`;
+}
+
+function hideAlert(el) {
+  if (!el) return;
+  el.className = "alert";
+  el.textContent = "";
+}
+
+function formatDate(value) {
+  if (!value) return "-";
+  const d = new Date(value);
+  if (isNaN(d)) return "-";
+  return d.toLocaleDateString("en-PH", { year: "numeric", month: "short", day: "numeric" });
+}
+
+function formatDateTime(value) {
+  if (!value) return "-";
+  const d = new Date(value);
+  if (isNaN(d)) return "-";
+  return d.toLocaleString("en-PH", {
+    year: "numeric", month: "short", day: "numeric",
+    hour: "2-digit", minute: "2-digit",
+  });
+}
+
+function badgeClass(status) {
+  const key = String(status || "").toLowerCase().replace(/\s+/g, "_");
+  return `badge badge-${key}`;
+}
+
+/* -----------------------------------------------------------
+   Lightweight modal, used by course-detail.js so materials,
+   announcements, and assignment details open in-place instead of
+   navigating to a new page. The overlay element is created once on
+   first use and reused after that.
+   ----------------------------------------------------------- */
+function openModal(title, bodyHtml) {
+  let overlay = document.getElementById("appModalOverlay");
+  if (!overlay) {
+    overlay = document.createElement("div");
+    overlay.id = "appModalOverlay";
+    overlay.className = "modal-overlay";
+    overlay.innerHTML = `
+      <div class="modal-panel">
+        <div class="modal-header">
+          <h2 id="appModalTitle"></h2>
+          <button type="button" class="modal-close" id="appModalClose" aria-label="Close">&times;</button>
+        </div>
+        <div class="modal-body" id="appModalBody"></div>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+    overlay.addEventListener("click", (e) => {
+      if (e.target === overlay) closeModal();
+    });
+    document.getElementById("appModalClose").addEventListener("click", closeModal);
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeModal();
+    });
+  }
+  document.getElementById("appModalTitle").textContent = title;
+  document.getElementById("appModalBody").innerHTML = bodyHtml;
+  overlay.classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+
+function closeModal() {
+  const overlay = document.getElementById("appModalOverlay");
+  if (!overlay) return;
+  overlay.classList.remove("open");
+  document.body.style.overflow = "";
+}
+
+function isSameCalendarDate(isoValue, referenceDate = new Date()) {
+  if (!isoValue) return false;
+  const d = new Date(isoValue);
+  if (isNaN(d)) return false;
+  return (
+    d.getFullYear() === referenceDate.getFullYear() &&
+    d.getMonth() === referenceDate.getMonth() &&
+    d.getDate() === referenceDate.getDate()
+  );
+}

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sign In - Looc Integrated School Portal</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body class="auth-page">
+
+  <div class="auth-brand-panel">
+    <div>
+      <img src="images/school-seal.png" alt="Looc Integrated School seal" class="seal">
+      <h1>Looc Integrated School</h1>
+      <div class="tagline">Division of Calamba City &middot; Department of Education</div>
+    </div>
+  </div>
+
+  <div class="auth-form-panel">
+    <div class="auth-card">
+      <h2>Welcome back</h2>
+      <p class="auth-subtitle">Sign in to access your learning portal.</p>
+
+      <div id="alertBox" class="alert alert-error"></div>
+
+      <form id="loginForm" novalidate>
+        <div class="form-group">
+          <label for="email">Email address</label>
+          <input type="email" id="email" name="email" required autocomplete="username" />
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" required autocomplete="current-password" />
+        </div>
+        <button type="submit" class="btn btn-primary" id="loginBtn">Sign In</button>
+      </form>
+
+      <div style="text-align:center; margin:16px 0; color:var(--color-text-muted); font-size:13px;">or</div>
+      <div id="googleSignInDiv" style="display:flex; justify-content:center;"></div>
+
+      <div class="auth-footer">
+        Don't have an account yet? <a href="register.html">Register here</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/shell.js"></script>
+  <script src="https://accounts.google.com/gsi/client"></script>
+  <script src="js/login.js"></script>
+</body>
+</html>
